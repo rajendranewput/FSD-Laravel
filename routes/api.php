@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PurchasingController;
 use App\Http\Controllers\CorController;
+use App\Http\Controllers\LoginController;
+
 
 
 Route::get('/user', function (Request $request) {
@@ -20,3 +22,4 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']);
 Route::post('/farm-fork-spend-data', [PurchasingController::class, 'farmForkSpendData']);
 Route::post('/cooked-leakage-data', [PurchasingController::class, 'purchasingCookedLeakageData']);
 Route::post('/cor-data', [CorController::class, 'CorData']);
+Route::post('/set-costcenter', [LoginController::class, 'setCostCentersToRedis']);
