@@ -124,6 +124,16 @@ class ArrayConditionServiceProvider extends ServiceProvider
                 );
             };
         });
+
+        $this->app->bind('ff.chart', function ($app) {
+            return function ($amount) {
+                if(isset($amount)){
+                    return ($amount >= 0) ? round($amount) : 0;
+                } else {
+                    return $amount;
+                }
+            };
+        });
     }
 
     /**

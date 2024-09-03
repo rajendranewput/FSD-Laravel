@@ -23,5 +23,16 @@ return [
     'INDICATOR_POSITIVE' => '#63BF87',
     'INDICATOR_NEGATIVE' => '#E35E56',
     'FF_FULL_CIRCLE_VALUE' => 20,
+    'EXP_1' => array('?'),
+    'PRODUCE_GL_CODE' => '411028',
+    'MEAT_GL_CODE' => '411029',
+    'CHEESE_GL_CODE' => '411031',
+    'FLUID_DAIRY_GL_CODE' => '411032',
+    'SEAFOOD_GL_CODE' => '411136',
+    'SUSHI_GL_CODE' => '411137',
+    'BAKERY_GL_CODE' => '411138',
+    'ARTISAN_GL_CODE' => '411139',
+    'COFFEE_GL_CODE' => '411140',
+    'LOCALLY_CRAFTED_GL_CODE' => '411141',
 ];
 ?>

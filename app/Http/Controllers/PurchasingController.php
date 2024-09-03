@@ -11,9 +11,7 @@ use DateTime;
 
 class PurchasingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    /*** To get farm to form data */
     public function farmForkSpendData(Request $request)
     {
         $checkCampusRollSummary = app('check.campusRollSummary')($request);
@@ -91,67 +89,57 @@ class PurchasingController extends Controller
         return app('ff.response')($farmToFork, $colorThreshold, $lineItem, $trendGraph);
     }
 
-    /**
-     * get cooked and leakage data
-     */
+    /*** get cooked and leakage data*/
     public function purchasingCookedLeakageData(Request $request){
-        //if($this->_check_user_logged_in(FALSE)) {
-            $checkDate = app('check.date')($request);
-            $checkCampusRollSummary = app('check.campusRollSummary')($request);
-            $checkAccCampusRoll = app('check.accCampusRoll')($request);
-            $checkCampusRoll = app('check.campusRoll')($request);
-            $checkallLevelFlag = app('check.allLevelFlag')($request);
-            if($checkCampusRollSummary){
-                $endDate = $checkDate;
-                $this->backwardDate = date('Y', strtotime(config('constants.BACKWARD_COMPATIBILITY_CHECK_DATE')));
-            } else {
-                if(is_array($checkDate)){
-                    foreach($checkDate as $date){
-                        $pDate = DateTime::createFromFormat('Y-m-d', $date);
-                        $pDate = new \DateTime($pDate);
-                        $endDate[] = $pDate->format('Y-m-d');
-                        $back_date = 0;
-                    }
-                } else {
-                    $pDate = DateTime::createFromFormat('Y-m-d', $checkDate);
+        $checkDate = app('check.date')($request);
+        $checkCampusRollSummary = app('check.campusRollSummary')($request);
+        $checkAccCampusRoll = app('check.accCampusRoll')($request);
+        $checkCampusRoll = app('check.campusRoll')($request);
+        $checkallLevelFlag = app('check.allLevelFlag')($request);
+        if($checkCampusRollSummary){
+            $endDate = $checkDate;
+            $this->backwardDate = date('Y', strtotime(config('constants.BACKWARD_COMPATIBILITY_CHECK_DATE')));
+        } else {
+            if(is_array($checkDate)){
+                foreach($checkDate as $date){
+                    $pDate = DateTime::createFromFormat('Y-m-d', $date);
                     $pDate = new \DateTime($pDate);
                     $endDate[] = $pDate->format('Y-m-d');
                     $back_date = 0;
                 }
-                $this->backward_date = '';
-            }
-            
-            if($checkallLevelFlag){
-                if($checkCampusRoll){
-                    $costCenters = $request->costCenters;
-                } else if($checkAccCampusRoll){
-                    $costCenters = '';//$this->purchasing_model->account_dynamic_cost_center($dynamic_location);
-                } else {
-                    $costCenters = '';//$this->purchasing_model->dynamic_cost_center($dynamic_location);
-                }
             } else {
-                $costCenters = $request->costCenters;
+                $pDate = DateTime::createFromFormat('Y-m-d', $checkDate);
+                $pDate = new \DateTime($pDate);
+                $endDate[] = $pDate->format('Y-m-d');
+                $back_date = 0;
             }
-            $cookedFromScratch = $this->cookedFromScratch($request, $endDate, $costCenters);
-            $leakageFromVendors = $this->leakageFromVendors($request, $endDate, $costCenters);
-            
-            $data = array(
-                'cookedFromScratch' => $cookedFromScratch,
-                'leakageFromVendors' => $leakageFromVendors
-            );
-            echo json_encode(array(
-                'data' => $data
-            ));
-        // } else {
-        //     $this->api_response['http_code'] = HTTP_PRECONDITION_FAILED;
-        //     $this->api_response['status'] = FALSE;
-        //     $data = array(
-        //         'login' => "Please login to access this page"
-        //     );
-        //     $this->api_response['error'] = $data;     
-        // }
+            $this->backward_date = '';
+        }
+        
+        if($checkallLevelFlag){
+            if($checkCampusRoll){
+                $costCenters = $request->costCenters;
+            } else if($checkAccCampusRoll){
+                $costCenters = '';//$this->purchasing_model->account_dynamic_cost_center($dynamic_location);
+            } else {
+                $costCenters = '';//$this->purchasing_model->dynamic_cost_center($dynamic_location);
+            }
+        } else {
+            $costCenters = $request->costCenters;
+        }
+        $cookedFromScratch = $this->cookedFromScratch($request, $endDate, $costCenters);
+        $leakageFromVendors = $this->leakageFromVendors($request, $endDate, $costCenters);
+        
+        $data = array(
+            'cookedFromScratch' => $cookedFromScratch,
+            'leakageFromVendors' => $leakageFromVendors
+        );
+        echo json_encode(array(
+            'data' => $data
+        ));
     }
 
+    /*** To get cooked from scratch data */
     public function cookedFromScratch($request, $endDate, $costCenters){
         foreach ($endDate as $dates ) {
             $backDate = 0;
@@ -159,7 +147,6 @@ class PurchasingController extends Controller
        
         $costCenter = app('join.costCenters')($costCenters, $request->campusRollUp);
         $cookedData = Purchasing::cookedFromScratch($request, $costCenter, $endDate, $request->campusRollUp);
-        
         //$color_threshold = get_pps_threshold($cookedData);
         return array(
             'amount' => $cookedData,
@@ -169,6 +156,7 @@ class PurchasingController extends Controller
         );
     }
 
+    /*** To get leakage from vendors data */
     public function leakageFromVendors($request, $endDate, $costCenters){
         foreach ($endDate as $dates ) {
             $backDate = 0;
@@ -185,35 +173,50 @@ class PurchasingController extends Controller
         );
     }
     
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    /*** To get farm to fork GL code data */
+    public function farmToForkGLCodeData(Request $request){
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $checkDate = app('check.date')($request);
+        $checkCampusRollSummary = app('check.campusRollSummary')($request);
+        $checkAccCampusRoll = app('check.accCampusRoll')($request);
+        $checkCampusRoll = app('check.campusRoll')($request);
+        $checkallLevelFlag = app('check.allLevelFlag')($request);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if($checkCampusRollSummary){
+            $endDate = $checkDate;
+        } else {
+            if(is_array($checkDate)){
+                foreach($checkDate as $date){
+                    $pDate = DateTime::createFromFormat('Y-m-d', $date);
+                    $pDate = new \DateTime($pDate);
+                    $endDate[] = $pDate->format('Y-m-d');
+                }
+            } else {
+                $pDate = DateTime::createFromFormat('Y-m-d', $checkDate);
+                $pDate = new \DateTime($pDate);
+                $endDate[] = $pDate->format('Y-m-d');
+            }
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if($checkallLevelFlag){
+            if($checkCampusRoll){
+                $costCenters = $request->costCenters;
+            } else if($checkAccCampusRoll){
+                $costCenters = '';//$this->purchasing_model->account_dynamic_cost_center($dynamic_location);
+            } else {
+                $costCenters = '';//$this->purchasing_model->dynamic_cost_center($dynamic_location);
+            }
+        }
+
+        $costCenter = app('join.costCenters')($costCenters, $request->campusRollUp);
+        $graphData = Purchasing::farmToForkGLCodeData($request, $costCenter, $endDate, $request->campusRollUp);
+        $farmToFormGLData = array(
+            'graph' => $graphData,
+            'line_item' => true,
+            'trend_graph' => true,
+        );
+        echo json_encode(array(
+            'data' => $farmToFormGLData
+        ));
     }
 }

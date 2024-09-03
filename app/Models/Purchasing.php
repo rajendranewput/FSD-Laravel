@@ -12,6 +12,7 @@ class Purchasing extends Model
 {
     use HasFactory, Notifiable;
 
+    // To fetch farm to fork data
     public static function farmToForkData($request, $costCenters, $date, $campusRollUp, $type, $fytdPeriods){
         $year = app('fiscal.year')($date);
         $checkAllLevel = app('check.allLevelFlag')($request);
@@ -79,6 +80,7 @@ class Purchasing extends Model
         return $result;
     }
 
+    // To fetch fiscal year and period using end date
     public static function fytdPeriods($endDate) {
         if(is_array($endDate)){
             foreach($endDate as $dates){
@@ -114,6 +116,7 @@ class Purchasing extends Model
         return $endDateArray;
     }
 
+    // To fetch cooked from scratch data
     public static function cookedFromScratch($request, $costCenter, $date, $campusRollUp){
         if(!is_array($costCenter)){
             $costCenter = explode(',', $costCenter);
@@ -153,6 +156,7 @@ class Purchasing extends Model
         return $result;
     }
 
+    // To fetch leakage from vendors data
     public static function leakageFromVendors($request, $costCenter, $date, $campusRollUp){
         if(!is_array($costCenter)){
             $costCenter = explode(',', $costCenter);
@@ -184,5 +188,105 @@ class Purchasing extends Model
         }
         return $result;
 
+    }
+
+    // To fetch Farm to Fork GL Code graph data
+    public static function farmToForkGLCodeData($request, $costCenters, $date, $campusRollUp){
+        $year = app('fiscal.year')($date);
+        $checkAllLevel = app('check.allLevelFlag')($request);
+        $checkCampusRollSummary = app('check.campusRollSummary')($request);
+        $constants = config('constants');
+        
+        if(!is_array($costCenters)){
+            $costCenters = explode(',', $costCenters);
+        }
+        $glQuery = DB::table('gl_codes')->whereIn('exp_1', $constants['F2F_EXP_ARRAY_ONE']);
+        
+        if($checkCampusRollSummary){
+            $glQuery->whereIn('unit_id', $costCenters);
+            $glQuery->where('processing_year', $year);
+        } else{
+            if($checkAllLevel){
+                $glQuery->whereIn('unit_id', $costCenters);
+            } else {
+                $glQuery->whereIn('unit_id', $costCenters);
+            }
+            if($request->type == 'period'){
+                $glQuery->whereIn('end_date', $date);
+            } else {
+                $glQuery->whereIn('end_date', $date);
+            }
+        }
+        $amount = $glQuery->get()->sum('amount');
+        $item1 = $amount;
+        
+        $glCodeQuery = DB::table('gl_codes');
+        if($checkAllLevel){
+            $date = app('fiscal.year')($date);
+        }
+        if($checkAllLevel){
+            $glCodeQuery->whereIn('unit_id', $costCenters);
+            $glCodeQuery->whereIn('exp_1', $constants['EXP_1']);
+            $glCodeQuery->whereIn('end_date', $date);
+        }
+        if($checkCampusRollSummary){
+            $glCodeQuery->whereIn('unit_id', $costCenters);
+            $glCodeQuery->whereIn('exp_1', '?');
+            $glCodeQuery->whereIn('processing_year', '?');
+        }
+        if($campusRollUp == 3){
+            $glCodeQuery->whereIn('unit_id', $costCenters);
+            $glCodeQuery->whereIn('exp_1', '?');
+            $glCodeQuery->whereIn('processing_year', '?');
+        }
+        if($campusRollUp == 0){
+            $glCodeQuery->whereIn('unit_id', $costCenters);
+            $glCodeQuery->whereIn('exp_1', '?');
+            $glCodeQuery->whereIn('end_date', $date);
+        }
+        $produce = $glCodeQuery->where('exp_1', $constants['PRODUCE_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $meat = $glCodeQuery->where('exp_1', $constants['MEAT_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $cheese = $glCodeQuery->where('exp_1', $constants['CHEESE_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $fluidDairy = $glCodeQuery->where('exp_1', $constants['FLUID_DAIRY_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $seaFood = $glCodeQuery->where('exp_1', $constants['SEAFOOD_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $sushi = $glCodeQuery->where('exp_1', $constants['SUSHI_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $bakery = $glCodeQuery->where('exp_1', $constants['BAKERY_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $artisanOther = $glCodeQuery->where('exp_1', $constants['ARTISAN_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $coffee = $glCodeQuery->where('exp_1', $constants['COFFEE_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $locallyCrafted = $glCodeQuery->where('exp_1', $constants['LOCALLY_CRAFTED_GL_CODE'])
+        ->where('created_at', $date)->first();
+
+        $dataArray = array(
+            'produce' => array('key' => 'Produce', 'code' => $constants['PRODUCE_GL_CODE'], 'amount' =>  app('ff.chart')($produce->amount)),
+            'meat' => array('key' => 'Meat/Eggs', 'code' => $constants['MEAT_GL_CODE'], 'amount' => app('ff.chart')($meat->amount)),
+            'cheese' => array('key' => 'Cheese', 'code' => $constants['CHEESE_GL_CODE'], 'amount' => app('ff.chart')($cheese->amount)),
+            'fluid_dairy' => array('key' => 'Fluid Dairy', 'code' => $constants['FLUID_DAIRY_GL_CODE'], 'amount' => app('ff.chart')($fluidDairy->amount)),
+            'sea_food' => array('key' => 'Seafood', 'code' => $constants['SEAFOOD_GL_CODE'], 'amount' => app('ff.chart')($seaFood->amount)),
+            'sushi' => array('key' => 'Sushi', 'code' => $constants['SUSHI_GL_CODE'], 'amount' => app('ff.chart')($sushi->amount)),
+            'bakery' => array('key' => 'Bakery', 'code' => $constants['BAKERY_GL_CODE'], 'amount' => app('ff.chart')($bakery->amount)),
+            'artisan_other' => array('key' => 'Artisan Other', 'code' => $constants['ARTISAN_GL_CODE'], 'amount' => app('ff.chart')($artisanOther->amount)),
+            'coffee' => array('key' => 'Coffee/Tea', 'code' => $constants['COFFEE_GL_CODE'], 'amount' => app('ff.chart')($coffee->amount)),
+            'locally_crafted' => array('key' => 'Locally Crafted', 'code' => $constants['LOCALLY_CRAFTED_GL_CODE'], 'amount' => app('ff.chart')($locallyCrafted->amount)),
+        );
+       
+        return $dataArray;
     }
 }
