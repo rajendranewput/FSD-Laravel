@@ -11,6 +11,7 @@ use DateTime;
 
 class PurchasingController extends Controller
 {
+    use DateHandlerTrait;
     /*** To get farm to form data */
     public function farmForkSpendData(Request $request)
     {
@@ -168,6 +169,7 @@ class PurchasingController extends Controller
             } else {
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
+           
             $graphData = Purchasing::farmToForkGLCodeData($request, $costCenter, $endDate, $request->campus_flag);
             $farmToFormGLData = array(
                 'graph' => $graphData,

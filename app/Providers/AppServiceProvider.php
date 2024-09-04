@@ -44,6 +44,16 @@ class AppServiceProvider extends ServiceProvider
         define('INDICATOR_POSITIVE', '#63BF87');
         define('INDICATOR_NEGATIVE', '#E35E56');
         define('EXCLUDED_COSTCENTERS', array('AGH000', 'AEV000', 'AEW000'));
+        define('PRODUCE_GL_CODE', 411028);
+        define('MEAT_GL_CODE', 411029);
+        define('CHEESE_GL_CODE', 411031);
+        define('FLUID_DAIRY_GL_CODE', 411032);
+        define('SEAFOOD_GL_CODE', 411136);
+        define('SUSHI_GL_CODE', 411137);
+        define('BAKERY_GL_CODE', 411138);
+        define('ARTISAN_GL_CODE', 411139);
+        define('COFFEE_GL_CODE', 411140);
+        define('LOCALLY_CRAFTED_GL_CODE', 411141);
 
     }
 }

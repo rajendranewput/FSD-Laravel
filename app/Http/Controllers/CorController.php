@@ -72,7 +72,6 @@ class CorController extends Controller
                 'eggs' => array('percentage' => $eggs, 'color_threshold' => $eggsColor),
                 'dairy' => array('percentage' => $dairy, 'color_threshold' => $dairyColor),
                 'fish' => array('percentage' => $fish, 'color_threshold' => $fishColor),
-
             );
             return response()->json([
                 'status' => 'success',

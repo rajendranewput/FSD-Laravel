@@ -15,7 +15,7 @@ class LoginController extends Controller
         foreach($sectorCost as $value){
             $sectorCostCenter[] = $value->team_name;
         }
-        Redis::set('sector_cost', json_encode($sectorCostCenter));
+        Redis::set('cost_A00000', json_encode($sectorCostCenter));
 
         //rvp cost center
         $sectorRvp = Login::getSectorRvp($sectorCostCenter);

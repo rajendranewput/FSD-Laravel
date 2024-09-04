@@ -22,7 +22,6 @@ class widgetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cost_center' => 'required',
             'end_date' => 'required|date',
             'campus_flag' => 'required|integer',
             'type' => 'required|string',
