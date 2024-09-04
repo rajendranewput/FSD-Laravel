@@ -191,56 +191,43 @@ class Purchasing extends Model
     }
 
     // To fetch Farm to Fork GL Code graph data
-    public static function farmToForkGLCodeData($request, $costCenters, $date, $campusRollUp){
-        $year = app('fiscal.year')($date);
+    public static function farmToForkGLCodeData($request, $costCenters, $date, $campus_flag){
+        $year = $request->year;
         $checkAllLevel = app('check.allLevelFlag')($request);
         $checkCampusRollSummary = app('check.campusRollSummary')($request);
         $constants = config('constants');
         
-        if(!is_array($costCenters)){
-            $costCenters = explode(',', $costCenters);
-        }
+        // if(!is_array($costCenters)){
+        //     $costCenters = explode(',', $costCenters);
+        // }
         $glQuery = DB::table('gl_codes')->whereIn('exp_1', $constants['F2F_EXP_ARRAY_ONE']);
         
         if($checkCampusRollSummary){
             $glQuery->whereIn('unit_id', $costCenters);
             $glQuery->where('processing_year', $year);
         } else{
-            if($checkAllLevel){
-                $glQuery->whereIn('unit_id', $costCenters);
-            } else {
-                $glQuery->whereIn('unit_id', $costCenters);
-            }
-            if($request->type == 'period'){
-                $glQuery->whereIn('end_date', $date);
-            } else {
-                $glQuery->whereIn('end_date', $date);
-            }
+            $glQuery->whereIn('unit_id', $costCenters);
+            $glQuery->whereIn('end_date', $date);
         }
         $amount = $glQuery->get()->sum('amount');
         $item1 = $amount;
         
         $glCodeQuery = DB::table('gl_codes');
+        $glCodeQuery->whereIn('unit_id', $costCenters);
+        
         if($checkAllLevel){
-            $date = app('fiscal.year')($date);
-        }
-        if($checkAllLevel){
-            $glCodeQuery->whereIn('unit_id', $costCenters);
             $glCodeQuery->whereIn('exp_1', $constants['EXP_1']);
             $glCodeQuery->whereIn('end_date', $date);
         }
         if($checkCampusRollSummary){
-            $glCodeQuery->whereIn('unit_id', $costCenters);
             $glCodeQuery->whereIn('exp_1', '?');
             $glCodeQuery->whereIn('processing_year', '?');
         }
-        if($campusRollUp == 3){
-            $glCodeQuery->whereIn('unit_id', $costCenters);
+        if($campus_flag == 3){
             $glCodeQuery->whereIn('exp_1', '?');
             $glCodeQuery->whereIn('processing_year', '?');
         }
-        if($campusRollUp == 0){
-            $glCodeQuery->whereIn('unit_id', $costCenters);
+        if($campus_flag == 0){
             $glCodeQuery->whereIn('exp_1', '?');
             $glCodeQuery->whereIn('end_date', $date);
         }

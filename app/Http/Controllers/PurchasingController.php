@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchasing;
-//use config\constants\MyConstants;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Redis;
+use App\Http\Requests\widgetRequest;
+use App\Traits\DateHandlerTrait;
+use App\Models\Purchasing;
 use DateTime;
 
 class PurchasingController extends Controller
@@ -29,13 +29,6 @@ class PurchasingController extends Controller
                     $endDate[] = $pDate->format('Y-m-d');
                     $fytdPeriods = Purchasing::fytdPeriods($endDate);
                     $backDate = 0;
-                    // foreach ($endDate as $dates ) {
-                    //     if ( $dates <= $this->backwardDate) {
-                    //         $backDate = 1;
-                    //     } else {
-                    //         $backDate = 0;
-                    //     }
-                    // }
                 }
             } else {
                 $pDate = date_create_from_format("m-d-Y", $checkDate)->format("Y-m-d");
@@ -43,15 +36,7 @@ class PurchasingController extends Controller
                 $endDate[] = $pDate->format('Y-m-d');
                 $fytdPeriods = Purchasing::fytdPeriods($endDate);
                 $backDate = 0;
-                // foreach ($endDate as $dates ) {
-                //     if ( $dates <= $this->backwardDate) {
-                //         $backDate = 1;
-                //     } else {
-                //         $backDate = 0;
-                //     }
-                // }
             }
-            //$this->backwardDate = config('constants.BACKWARD_COMPATIBILITY_CHECK_DATE');
         }
         
         $backwardDate = false;
@@ -175,48 +160,25 @@ class PurchasingController extends Controller
     
     /*** To get farm to fork GL code data */
     public function farmToForkGLCodeData(Request $request){
-
-        $checkDate = app('check.date')($request);
-        $checkCampusRollSummary = app('check.campusRollSummary')($request);
-        $checkAccCampusRoll = app('check.accCampusRoll')($request);
-        $checkCampusRoll = app('check.campusRoll')($request);
-        $checkallLevelFlag = app('check.allLevelFlag')($request);
-
-        if($checkCampusRollSummary){
-            $endDate = $checkDate;
-        } else {
-            if(is_array($checkDate)){
-                foreach($checkDate as $date){
-                    $pDate = DateTime::createFromFormat('Y-m-d', $date);
-                    $pDate = new \DateTime($pDate);
-                    $endDate[] = $pDate->format('Y-m-d');
-                }
+        //$validated = $request->validated();
+        try{
+            $endDate = $this->handleDates($request->end_date, $request->campus_flag);
+            if($request->type == 'campus'){
+                $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
             } else {
-                $pDate = DateTime::createFromFormat('Y-m-d', $checkDate);
-                $pDate = new \DateTime($pDate);
-                $endDate[] = $pDate->format('Y-m-d');
+                $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
+            $graphData = Purchasing::farmToForkGLCodeData($request, $costCenter, $endDate, $request->campus_flag);
+            $farmToFormGLData = array(
+                'graph' => $graphData,
+                'line_item' => true,
+                'trend_graph' => true,
+            );
+            echo json_encode(array(
+                'data' => $farmToFormGLData
+            ));
+        } catch(\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
-        if($checkallLevelFlag){
-            if($checkCampusRoll){
-                $costCenters = $request->costCenters;
-            } else if($checkAccCampusRoll){
-                $costCenters = '';//$this->purchasing_model->account_dynamic_cost_center($dynamic_location);
-            } else {
-                $costCenters = '';//$this->purchasing_model->dynamic_cost_center($dynamic_location);
-            }
-        }
-
-        $costCenter = app('join.costCenters')($costCenters, $request->campusRollUp);
-        $graphData = Purchasing::farmToForkGLCodeData($request, $costCenter, $endDate, $request->campusRollUp);
-        $farmToFormGLData = array(
-            'graph' => $graphData,
-            'line_item' => true,
-            'trend_graph' => true,
-        );
-        echo json_encode(array(
-            'data' => $farmToFormGLData
-        ));
     }
 }
