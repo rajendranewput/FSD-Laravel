@@ -22,4 +22,38 @@ class Farmtofork extends Model
         ->get();
         return $data;
     }
+
+    static function farmToForkData($date, $costCenter, $campus_flag, $year){
+        // Get item 1 calculation
+        $data1 = DB::table('gl_codes')
+        ->select(DB::raw('SUM(amount) as amount'), 'exp_1')
+        ->whereIn('unit_id', $costCenter)
+        ->whereIn('exp_1', F2F_EXP_ARRAY_ONE)
+        ->whereIn('end_date', $date)
+        ->groupBy('exp_1')
+        ->first();
+        $item1 = $data1;
+        
+        // Get item 2 calculation
+        $data2 = DB::table('gl_codes')
+        ->select(DB::raw('SUM(amount) as amount'), 'exp_1')
+        ->whereIn('unit_id', $costCenter)
+        ->whereIn('exp_1', F2F_EXP_ARRAY_TWO)
+        ->whereIn('end_date', $date)
+        ->whereIn('processing_year', [$year])
+        ->groupBy('exp_1')
+        ->first();
+        $item2 = $data2;
+
+        if (empty($item1) && empty($item2)) {
+            $result = null;
+        } elseif (empty($item1)) {
+            $result = 0;
+        } elseif (empty($item2)) {
+            $result = null;
+        } else {
+            $result = round(abs($item1 / $item2) * 100, 1);
+        }
+        return $result;
+    }
 }

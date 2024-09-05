@@ -19,7 +19,7 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
-Route::post('/farm-fork-spend-data', [PurchasingController::class, 'farmForkSpendData']);
+Route::post('/farm-fork-spend-data', [FarmtoforkController::class, 'farmForkSpendData']);
 Route::post('/cooked-leakage-data', [PurchasingController::class, 'purchasingCookedLeakageData']);
 Route::post('/farm-to-fork-gl-code-graph', [FarmtoforkController::class, 'farmToForkGLCodeData']);
 Route::post('/cor-data', [CorController::class, 'CorData']);

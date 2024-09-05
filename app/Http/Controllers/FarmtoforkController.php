@@ -12,6 +12,7 @@ class FarmtoforkController extends Controller
 {
     use DateHandlerTrait;
 
+    /*** To get farm to form gl code graph data */
     public function farmToForkGLCodeData(widgetRequest $request){
         $validated = $request->validated();
         try{
@@ -86,5 +87,35 @@ class FarmtoforkController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
+    }
+
+    /*** To get farm to fork year period data */
+    public function farmForkSpendData(widgetRequest $request){
+        $validated = $request->validated();
+        try{
+            $year = $request->year;
+            $date = $this->handleDates($request->end_date, $request->campus_flag);
+           // $fytdPeriods = Purchasing::fytdPeriods($date);
+            if($request->type == 'campus'){
+                $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
+            } else {
+                $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
+            }
+            
+            $farmToFork = Farmtofork::farmToForkData($date, $costCenter, $request->campus_flag, $year);
+            $colorThreshold = app('color.threshold')($farmToFork);
+            $yearPeriodData = app('ff.response')($farmToFork, $colorThreshold);
+            $finalData = array(
+                'farmToForkPeriodData' => $yearPeriodData,
+                'farmToForkYearData' => $yearPeriodData
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $finalData,
+            ], 200);
+        } catch(\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
