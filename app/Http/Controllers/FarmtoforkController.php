@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\widgetRequest;
 use App\Traits\DateHandlerTrait;
+use App\Traits\PurchasingTrait;
 use App\Models\Farmtofork;
+use App\Models\Purchasing;
 use Illuminate\Support\Facades\Redis;
 
 class FarmtoforkController extends Controller
 {
-    use DateHandlerTrait;
+    use DateHandlerTrait, PurchasingTrait;
 
-    /*** To get farm to form gl code graph data */
+    /* To get farm to fork GL code data */
     public function farmToForkGLCodeData(widgetRequest $request){
         $validated = $request->validated();
         try{
@@ -86,10 +88,8 @@ class FarmtoforkController extends Controller
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-
     }
 
-    /*** To get farm to fork year period data */
     public function farmForkSpendData(widgetRequest $request){
         $validated = $request->validated();
         try{
@@ -103,8 +103,13 @@ class FarmtoforkController extends Controller
             }
             
             $farmToFork = Farmtofork::farmToForkData($date, $costCenter, $request->campus_flag, $year);
-            $colorThreshold = app('color.threshold')($farmToFork);
-            $yearPeriodData = app('ff.response')($farmToFork, $colorThreshold);
+            $colorThreshold = $this->getColorThreshold($farmToFork, FARM_FORK_SECTION);
+            $percentage = ($farmToFork/FF_FULL_CIRCLE_VALUE)*100;
+            $yearPeriodData = array(
+                'percentage' => $percentage,
+                'display_value' => $farmToFork,
+                'color_threshold' => $colorThreshold
+            );
             $finalData = array(
                 'farmToForkPeriodData' => $yearPeriodData,
                 'farmToForkYearData' => $yearPeriodData

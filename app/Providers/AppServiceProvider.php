@@ -54,6 +54,13 @@ class AppServiceProvider extends ServiceProvider
         define('ARTISAN_GL_CODE', 411139);
         define('COFFEE_GL_CODE', 411140);
         define('LOCALLY_CRAFTED_GL_CODE', 411141);
-
+        define('F2F_EXP_ARRAY_ONE', array('411028', '411029', '411031', '411032', '411136', '411137', '411138', '411139', '411140', '411141'));
+        define('F2F_EXP_ARRAY_TWO', array('411028', '411029', '411031', '411032', '411136', '411137', '411138', '411139', '411140', '411141', '411036', '411037', '411038', '411039', '411041', '411045', '411048', '411060', '411061', '411071', '411072', '411073', '411074', '411076', '411085', '411086', '411100'));
+        define('COR_SECTION', 'cor');
+        define('COOKED_LEAKAGE_SECTION', 'cookedLeakage');
+        define('FARM_FORK_SECTION', 'farmToFork');
+        define('PPS_COLOR_DIVIDE_VALUE', 0);
+        define('FF_COLOR_DIVIDE_VALUE', 15);
+        define('FF_FULL_CIRCLE_VALUE', 20);
     }
 }

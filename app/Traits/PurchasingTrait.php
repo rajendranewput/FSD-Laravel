@@ -4,11 +4,15 @@ namespace App\Traits;
 
 trait PurchasingTrait
 {
-    public function getColorThreshold($value){
-        if($value >= COR_COLOR_DIVIDE_VALUE){
+    public function getColorThreshold($value, $section){
+        if (
+            ($section == COR_SECTION && $value >= COR_COLOR_DIVIDE_VALUE) ||
+            ($section == COOKED_LEAKAGE_SECTION && $value <= PPS_COLOR_DIVIDE_VALUE) ||
+            ($section == FARM_FORK_SECTION && $value >= FF_COLOR_DIVIDE_VALUE)
+        ) {
             $color = INDICATOR_POSITIVE;
         } else {
-            $color = INDICATOR_NEGATIVE; 
+            $color = INDICATOR_NEGATIVE;
         }
         return $color;
     }

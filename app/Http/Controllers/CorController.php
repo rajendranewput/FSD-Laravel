@@ -54,14 +54,14 @@ class CorController extends Controller
             $dairy = $this->getCorValue($data, DAIRY_PRODUCT_CODE);
             $fish = $this->getCorValue($data, FISH_AND_SEEFOOD_CODE);
 
-            $totalColor = $this->getColorThreshold($total);
-            $beefColor = $this->getColorThreshold($beef);
-            $chikenColor = $this->getColorThreshold($chiken);
-            $turkeyColor = $this->getColorThreshold($turkey);
-            $porkColor = $this->getColorThreshold($pork);
-            $eggsColor = $this->getColorThreshold($eggs);
-            $dairyColor = $this->getColorThreshold($dairy);
-            $fishColor = $this->getColorThreshold($fish);
+            $totalColor = $this->getColorThreshold($total, COR_SECTION);
+            $beefColor = $this->getColorThreshold($beef, COR_SECTION);
+            $chikenColor = $this->getColorThreshold($chiken, COR_SECTION);
+            $turkeyColor = $this->getColorThreshold($turkey, COR_SECTION);
+            $porkColor = $this->getColorThreshold($pork, COR_SECTION);
+            $eggsColor = $this->getColorThreshold($eggs, COR_SECTION);
+            $dairyColor = $this->getColorThreshold($dairy, COR_SECTION);
+            $fishColor = $this->getColorThreshold($fish, COR_SECTION);
             
             $corResponse = array(
                 'total_cor' => array('percentage' => $total, 'color_threshold' => $totalColor),
