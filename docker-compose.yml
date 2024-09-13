@@ -46,6 +46,12 @@ services:
         depends_on:
             - mysql
 
+    redis:
+        image: redis:alpine
+        ports:
+        - '6379:6379'
+        networks:
+        - sail
 
 networks:
     sail:
