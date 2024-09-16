@@ -7,7 +7,7 @@ use App\Http\Controllers\PurchasingController;
 use App\Http\Controllers\CorController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\FarmtoforkController;
-
+use App\Http\Controllers\FiscalPeriodController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -20,3 +20,8 @@ Route::post('/cooked-leakage-data', [PurchasingController::class, 'purchasingCoo
 Route::post('/farm-to-fork-gl-code-graph', [FarmtoforkController::class, 'farmToForkGLCodeData']);
 Route::post('/cor-data', [CorController::class, 'CorData']);
 Route::post('/set-costcenter', [LoginController::class, 'setCostCentersToRedis']);
+Route::get('/get-fiscal-year', [FiscalPeriodController::class, 'getFiscalYear']);
+Route::post('/get-fiscal-period', [FiscalPeriodController::class, 'getFiscalPeriod']);
+
+
+
