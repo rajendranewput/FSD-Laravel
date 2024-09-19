@@ -22,7 +22,7 @@ class FiscalPeriod extends Model
         
         $todayDate = date('Y-m-01');
         $data = DB::table('dashboard_fiscal_periods')
-        ->select('fiscal_period', 'end_date')
+        ->select('fiscal_period', 'end_date', 'start_date')
         ->where('fiscal_year', $year)
         ->where(DB::raw('DATE_FORMAT(STR_TO_DATE(end_date, "%m/%d/%Y"), "%Y-%m-01")'), '<=', $todayDate)
         ->get();
