@@ -23,27 +23,32 @@ class Farmtofork extends Model
         return $data;
     }
 
-    static function farmToForkData($date, $costCenter, $campus_flag, $year){
+    static function farmToForkData($date, $costCenter, $campus_flag, $year, $type){
         // Get item 1 calculation
-        $data1 = DB::table('gl_codes')
-        ->select(DB::raw('SUM(amount) as amount'), 'exp_1')
+        $query = DB::table('gl_codes')
+        ->select(DB::raw('SUM(amount) as amount'))
         ->whereIn('unit_id', $costCenter)
         ->whereIn('exp_1', F2F_EXP_ARRAY_ONE)
-        ->whereIn('end_date', $date)
-        ->groupBy('exp_1')
-        ->first();
-        $item1 = $data1;
+        ->whereIn('processing_date', $date);
+        if($type == 'year'){
+            $query->where('processing_year', $year);
+        }
+        $query->groupBy('exp_1');
+        $item1 = $query->first();
+        $item1 = $item1->amount;
         
         // Get item 2 calculation
-        $data2 = DB::table('gl_codes')
-        ->select(DB::raw('SUM(amount) as amount'), 'exp_1')
+        $query2 = DB::table('gl_codes')
+        ->select(DB::raw('SUM(amount) as amount'))
         ->whereIn('unit_id', $costCenter)
         ->whereIn('exp_1', F2F_EXP_ARRAY_TWO)
-        ->whereIn('end_date', $date)
-        ->whereIn('processing_year', [$year])
-        ->groupBy('exp_1')
-        ->first();
-        $item2 = $data2;
+        ->whereIn('processing_date', $date);
+        if($type == 'year'){
+            $query2->where('processing_year', $year);
+        }
+        $query2->groupBy('exp_1');
+        $item2 = $query2->first();
+        $item2 = $item2->amount;
 
         if (empty($item1) && empty($item2)) {
             $result = null;
@@ -52,8 +57,9 @@ class Farmtofork extends Model
         } elseif (empty($item2)) {
             $result = null;
         } else {
-            $result = round(abs($item1 / $item2) * 100, 1);
+            $result = round(ABS(($item1 / $item2) * 100), 1);
         }
+        
         return $result;
     }
 }
