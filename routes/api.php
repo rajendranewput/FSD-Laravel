@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\FarmtoforkController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\FlavorFirstController;
+use App\Http\Controllers\BeefPerMealController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -24,6 +25,6 @@ Route::post('/set-costcenter', [LoginController::class, 'setCostCentersToRedis']
 Route::get('/get-fiscal-year', [FiscalPeriodController::class, 'getFiscalYear']);
 Route::post('/get-fiscal-period', [FiscalPeriodController::class, 'getFiscalPeriod']);
 //Route::post('/download-flavor-first-report', [FlavorFirstController::class, 'downloadFlavorFirstReport']);
-
 Route::post('/download-flavor-first-report', [FlavorFirstController::class, 'export']);
+Route::post('/beef-meal', [BeefPerMealController::class, 'beefPerMeal']);
 
