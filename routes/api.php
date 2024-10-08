@@ -10,6 +10,7 @@ use App\Http\Controllers\FarmtoforkController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\FlavorFirstController;
 use App\Http\Controllers\BeefPerMealController;
+use App\Http\Controllers\ShareImageController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -27,4 +28,5 @@ Route::post('/get-fiscal-period', [FiscalPeriodController::class, 'getFiscalPeri
 //Route::post('/download-flavor-first-report', [FlavorFirstController::class, 'downloadFlavorFirstReport']);
 Route::post('/download-flavor-first-report', [FlavorFirstController::class, 'export']);
 Route::post('/beef-meal', [BeefPerMealController::class, 'beefPerMeal']);
+Route::post('/image-share', [ShareImageController::class, 'shareImage']);
 
