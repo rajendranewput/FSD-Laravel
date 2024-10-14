@@ -12,6 +12,7 @@ use App\Http\Controllers\FlavorFirstController;
 use App\Http\Controllers\BeefPerMealController;
 use App\Http\Controllers\ShareImageController;
 use App\Http\Controllers\TrimmingTransportationController;
+use App\Http\Controllers\SapHierarchyController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -31,4 +32,6 @@ Route::post('/download-flavor-first-report', [FlavorFirstController::class, 'exp
 Route::post('/beef-meal', [BeefPerMealController::class, 'beefPerMeal']);
 Route::post('/image-share', [ShareImageController::class, 'shareImage']);
 Route::post('/trimming-transportation', [TrimmingTransportationController::class, 'trimmingTransportation']);
+Route::post('/sap-hierarchy', [SapHierarchyController::class, 'sapHierarchy']);
+
 
