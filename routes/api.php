@@ -13,6 +13,7 @@ use App\Http\Controllers\BeefPerMealController;
 use App\Http\Controllers\ShareImageController;
 use App\Http\Controllers\TrimmingTransportationController;
 use App\Http\Controllers\SapHierarchyController;
+use App\Http\Controllers\GoogleAnalyticsController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -33,5 +34,4 @@ Route::post('/beef-meal', [BeefPerMealController::class, 'beefPerMeal']);
 Route::post('/image-share', [ShareImageController::class, 'shareImage']);
 Route::post('/trimming-transportation', [TrimmingTransportationController::class, 'trimmingTransportation']);
 Route::post('/sap-hierarchy', [SapHierarchyController::class, 'sapHierarchy']);
-
-
+Route::get('/download-csv-report', [GoogleAnalyticsController::class, 'downloadCsvReport']);

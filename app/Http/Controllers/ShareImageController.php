@@ -22,7 +22,7 @@ class ShareImageController extends Controller
                 'title' => 'Mail From Laravel',
                 'body' => $url
             ];
-            $mail = Mail::to('rajendra@newput.com')->send(new SendMail($details));
+            $mail = Mail::to('hemlata@newput.com')->send(new SendMail($details));
            
             return response()->json([
                 'message' => 'Email sent successfully',
