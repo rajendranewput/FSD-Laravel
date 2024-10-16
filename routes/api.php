@@ -14,6 +14,7 @@ use App\Http\Controllers\ShareImageController;
 use App\Http\Controllers\TrimmingTransportationController;
 use App\Http\Controllers\SapHierarchyController;
 use App\Http\Controllers\GoogleAnalyticsController;
+use App\Http\Controllers\DecreasingDeforestationController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -35,3 +36,4 @@ Route::post('/image-share', [ShareImageController::class, 'shareImage']);
 Route::post('/trimming-transportation', [TrimmingTransportationController::class, 'trimmingTransportation']);
 Route::post('/sap-hierarchy', [SapHierarchyController::class, 'sapHierarchy']);
 Route::get('/download-csv-report', [GoogleAnalyticsController::class, 'downloadCsvReport']);
+Route::post('/decreasing-deforestation', [DecreasingDeforestationController::class, 'decreasingDeforestation']);

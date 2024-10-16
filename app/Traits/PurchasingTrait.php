@@ -8,7 +8,10 @@ trait PurchasingTrait
         if (
             ($section == COR_SECTION && $value >= COR_COLOR_DIVIDE_VALUE) ||
             ($section == COOKED_LEAKAGE_SECTION && $value <= PPS_COLOR_DIVIDE_VALUE) ||
-            ($section == FARM_FORK_SECTION && $value >= FF_COLOR_DIVIDE_VALUE)
+            ($section == FARM_FORK_SECTION && $value >= FF_COLOR_DIVIDE_VALUE) ||
+            ($section == IMPORTED_MEAT && $value >= IMPORTED_MEAT_VALUE) ||
+            ($section == PAPER_PURCHASES && $value >= PAPER_PURCHASES_VALUE) ||
+            ($section == COFFEE_SPEND && $value >= COFFEE_SPEND_VALUE)
         ) {
             $color = INDICATOR_POSITIVE;
         } else {
