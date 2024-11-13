@@ -17,7 +17,7 @@ class Farmtofork extends Model
         ->select(DB::raw('SUM(amount) as amount'), 'exp_1')
         ->whereIn('unit_id', $costCenter)
         ->whereIn('exp_1', $glCode)
-        ->whereIn('processing_month', $date)
+        ->whereIn('processing_year', $date)
         ->groupBy('exp_1')
         ->get();
         return $data;
@@ -29,7 +29,8 @@ class Farmtofork extends Model
         ->select(DB::raw('SUM(amount) as amount'))
         ->whereIn('unit_id', $costCenter)
         ->whereIn('exp_1', F2F_EXP_ARRAY_ONE)
-        ->whereIn('processing_date', $date);
+        // ->whereIn('processing_date', $date);
+        ->whereIn('end_date', $date);
         if($type == 'year'){
             $query->where('processing_year', $year);
         }
@@ -42,7 +43,8 @@ class Farmtofork extends Model
         ->select(DB::raw('SUM(amount) as amount'))
         ->whereIn('unit_id', $costCenter)
         ->whereIn('exp_1', F2F_EXP_ARRAY_TWO)
-        ->whereIn('processing_date', $date);
+        // ->whereIn('processing_date', $date);
+        ->whereIn('end_date', $date);
         if($type == 'year'){
             $query2->where('processing_year', $year);
         }

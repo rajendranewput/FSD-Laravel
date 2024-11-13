@@ -26,33 +26,37 @@ class GoogleAnalyticsService
 
     public function getReport($propertyId, $startDate, $endDate)
     {
-        // $dateRange = new \Google\Service\AnalyticsData\DateRange();
-        // $dateRange->setStartDate($startDate);
-        // $dateRange->setEndDate($endDate);
+        $dateRange = new \Google\Service\AnalyticsData\DateRange();
+        $dateRange->setStartDate($startDate);
+        $dateRange->setEndDate($endDate);
 
-        // Define dimensions (like 'country')
         $dimension = new Dimension();
-        $dimension->setName('country');  // Replace with your desired dimension
+        $dimension->setName('country');
 
-        
         $dimensionEventName = new Dimension();
-        $dimensionEventName->setName('eventName');  // Dimension for event name
+        $dimensionEventName->setName('eventName');
         
         $dimensionEventLabel = new Dimension();
-        $dimensionEventLabel->setName('customEvent:event_label');  // Dimension for event label
+        $dimensionEventLabel->setName('customEvent:event_label');
+
+        $selectedLevel = new Dimension();
+        $selectedLevel->setName('customEvent:selected_level');
+
+        $selectedValue = new Dimension();
+        $selectedValue->setName('customEvent:selected_value');
+
+        $selectedName = new Dimension();
+        $selectedName->setName('customEvent:selected_name'); 
         
-        // Define metrics (like 'sessions')
         $metric = new Metric();
-        $metric->setName('sessions');  // Replace with your desired metric
+        $metric->setName('sessions');
 
-        // You can also define a metric like 'eventCount' to retrieve the number of events
         $metricEventCount = new Metric();
-        $metricEventCount->setName('eventCount');  // Metric for the event count
+        $metricEventCount->setName('eventCount');
 
-        // Define the date range
-        $dateRange = new DateRange();
-        $dateRange->setStartDate('30daysAgo');  // Example range
-        $dateRange->setEndDate('today');
+        // $dateRange = new DateRange();
+        // $dateRange->setStartDate('30daysAgo');  // Example range
+        // $dateRange->setEndDate('today');
 
         // Create the event name filter
         $eventFilter = new Filter();
@@ -61,7 +65,7 @@ class GoogleAnalyticsService
        // Create a StringFilter for matching the exact event name
         $stringFilter = new StringFilter();
         $stringFilter->setMatchType('EXACT');
-        $stringFilter->setValue('button_click'); // The specific event name to filter
+        $stringFilter->setValue('button_click');
 
         // Set the StringFilter in the event filter
         $eventFilter->setStringFilter($stringFilter);
@@ -75,7 +79,7 @@ class GoogleAnalyticsService
         $request->setDateRanges([$dateRange]);
         $request->setMetrics([$metric]);
         $request->setMetrics([$metricEventCount]);
-        $request->setDimensions([$dimension, $dimensionEventName, $dimensionEventLabel]);
+        $request->setDimensions([$dimension, $dimensionEventName, $dimensionEventLabel, $selectedLevel, $selectedValue, $selectedName]);
         $request->setDimensionFilter($filterExpression);  // Apply the filter
 
         // Run the report
@@ -87,18 +91,19 @@ class GoogleAnalyticsService
     private function processReport($report)
     {
         // Set up the CSV header
-        $csvData = "Country,Selected Levels,Counts\n";
-
+        $csvData = "Country,Selected Level, Id, Name, Click Counts\n";
         // Process each row from the report
         foreach ($report->getRows() as $row) {
-            $eventName = $row->getDimensionValues()[0]->getValue();  // Accessing eventName dimension
-            $eventLabel = $row->getDimensionValues()[2]->getValue();  // Accessing eventLabel dimension
-            $country = $row->getDimensionValues()[0]->getValue();  // Accessing 'country' dimension
+           // $eventName = $row->getDimensionValues()[0]->getValue();  // Accessing eventName dimension
+            //$eventLabel = $row->getDimensionValues()[2]->getValue();  // Accessing eventLabel dimension
+            $level = $row->getDimensionValues()[3]->getValue();  // Accessing eventLabel dimension
+            $value = $row->getDimensionValues()[4]->getValue();  // Accessing eventLabel dimension
+            $name = $row->getDimensionValues()[5]->getValue();  // Accessing eventLabel dimension
             $sessions = $row->getMetricValues()[0]->getValue();    // Accessing 'sessions' metric
             $eventCount = $row->getMetricValues()[0]->getValue();
 
             // Add data to CSV
-            $csvData .= "$eventName,$eventLabel,$eventCount\n";
+            $csvData .= "$level,$value,$name,$eventCount\n";
         }
 
         return $csvData;

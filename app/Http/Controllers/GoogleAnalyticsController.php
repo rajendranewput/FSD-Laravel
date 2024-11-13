@@ -15,11 +15,11 @@ class GoogleAnalyticsController extends Controller
 
     public function downloadCsvReport(Request $request)
     {
-        $startDate = $request->query('start_date', 'default_start_date');
-        $endDate = $request->query('end_date', 'default_end_date');
+        // $startDate = $request->query('start_date', 'default_start_date');
+        // $endDate = $request->query('end_date', 'default_end_date');
         $propertyId = '460222082';
-        $startDate = $startDate;
-        $endDate = $endDate;
+        $startDate = '15daysAgo';
+        $endDate = 'today';
 
         $report = $this->analytics->getReport($propertyId, $startDate, $endDate);
         return $report;

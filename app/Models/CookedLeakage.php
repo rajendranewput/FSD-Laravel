@@ -13,7 +13,7 @@ class CookedLeakage extends Model
     // To fetch cooked from scratch data
     static function cookedFromScratch($date, $costCenter, $campus_flag, $year){
        
-        $cookedFromScratch = DB::table('purchases_meta')     
+        $cookedFromScratch = DB::table('purchases_meta_'.$year)     
             ->select(DB::raw('SUM(IF(cfs = 2, spend, 0)) as spend'))
             ->where('processing_year', $year)
             ->whereIn('processing_month_date', $date)

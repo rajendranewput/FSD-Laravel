@@ -102,17 +102,26 @@ class FarmtoforkController extends Controller
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
             
-            $farmToFork = Farmtofork::farmToForkData($date, $costCenter, $request->campus_flag, $year);
-            $colorThreshold = $this->getColorThreshold($farmToFork, FARM_FORK_SECTION);
-            $percentage = ($farmToFork/FF_FULL_CIRCLE_VALUE)*100;
-            $yearPeriodData = array(
+            $farmToForkYear = Farmtofork::farmToForkData($date, $costCenter, $request->campus_flag, $year, 'year');
+            $colorThreshold = $this->getColorThreshold($farmToForkYear, FARM_FORK_SECTION);
+            $percentage = ($farmToForkYear/FF_FULL_CIRCLE_VALUE)*100;
+            $yearData = array(
                 'percentage' => $percentage,
-                'display_value' => $farmToFork,
+                'display_value' => $farmToForkYear,
                 'color_threshold' => $colorThreshold
             );
+
+            $farmToForkPeriod = Farmtofork::farmToForkData($date, $costCenter, $request->campus_flag, $year, 'period');
+            $colorThresholdPeriod = $this->getColorThreshold($farmToForkPeriod, FARM_FORK_SECTION);
+            $percentagePeriod = ($farmToForkPeriod/FF_FULL_CIRCLE_VALUE)*100;
+            $periodData = array(
+                'percentage' => $percentagePeriod,
+                'display_value' => $farmToForkPeriod,
+                'color_threshold' => $colorThresholdPeriod
+            );
             $finalData = array(
-                'farmToForkPeriodData' => $yearPeriodData,
-                'farmToForkYearData' => $yearPeriodData
+                'farmToForkPeriodData' => $periodData,
+                'farmToForkYearData' => $yearData
             );
 
             return response()->json([
