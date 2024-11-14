@@ -30,7 +30,7 @@ class Farmtofork extends Model
         ->whereIn('unit_id', $costCenter)
         ->whereIn('exp_1', F2F_EXP_ARRAY_ONE)
         // ->whereIn('processing_date', $date);
-        ->whereIn('end_date', $date);
+        ->whereIn('processing_date', $date);
         if($type == 'year'){
             $query->where('processing_year', $year);
         }
@@ -44,7 +44,7 @@ class Farmtofork extends Model
         ->whereIn('unit_id', $costCenter)
         ->whereIn('exp_1', F2F_EXP_ARRAY_TWO)
         // ->whereIn('processing_date', $date);
-        ->whereIn('end_date', $date);
+        ->whereIn('processing_date', $date);
         if($type == 'year'){
             $query2->where('processing_year', $year);
         }
