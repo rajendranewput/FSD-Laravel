@@ -5,6 +5,14 @@ on:
     branches:
       - main
     workflow_dispatch:
+      inputs:
+        environment:
+          description: 'This environment have manual workflow trigger'
+          required: true
+          default: 'production'
+        version:
+          description: 'Version of the app to deploy'
+          required: false
 
 jobs:
   deploy:
