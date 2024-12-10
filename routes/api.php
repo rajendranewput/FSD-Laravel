@@ -16,6 +16,7 @@ use App\Http\Controllers\TrimmingTransportationController;
 use App\Http\Controllers\SapHierarchyController;
 use App\Http\Controllers\GoogleAnalyticsController;
 use App\Http\Controllers\DecreasingDeforestationController;
+use App\Http\Controllers\EmphasizePlantController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -38,3 +39,4 @@ Route::post('/trimming-transportation', [TrimmingTransportationController::class
 Route::post('/sap-hierarchy', [SapHierarchyController::class, 'sapHierarchy']);
 Route::get('/download-csv-report', [GoogleAnalyticsController::class, 'downloadCsvReport']);
 Route::post('/decreasing-deforestation', [DecreasingDeforestationController::class, 'decreasingDeforestation']);
+Route::post('/emphasize-plant-proteins', [EmphasizePlantController::class, 'emphasizePlant']);
