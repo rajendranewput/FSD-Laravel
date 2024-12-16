@@ -4,15 +4,18 @@ on:
   push:
     branches:
       - main
+    pull_request:
+      branches:
+        - main
     workflow_dispatch:
-      inputs:
-        environment:
-          description: 'This environment have manual workflow trigger'
-          required: true
-          default: 'production'
-        version:
-          description: 'Version of the app to deploy'
-          required: false
+    inputs:
+      environment:
+        description: 'Deployment environment (e.g., staging, production)'
+        required: true
+        default: 'production'
+      version:
+        description: 'App version to deploy'
+        required: false
 
 jobs:
   deploy:
