@@ -41,12 +41,30 @@
     define('IMPORTED_MEAT', 'importedMeat');
     define('PAPER_PURCHASES', 'paperPurchases');
     define('COFFEE_SPEND', 'coffeeSpend');
+
+    define('PRODUCE_DATA', 'produceData');
+    define('WHOLE_GRAIN', 'wholeGrain');
+    define('DAIRY', 'dairy');
+    define('ANIMAL_PROTEIN', 'animalProtein');
+    define('PLANT_PROTEIN', 'plantProtein');
+    define('SUGAR', 'sugar');
+    define('PLANT_OIL', 'plantOil');
+
     define('PPS_COLOR_DIVIDE_VALUE', 0);
     define('FF_COLOR_DIVIDE_VALUE', 15);
     define('FF_FULL_CIRCLE_VALUE', 20);
     define('IMPORTED_MEAT_VALUE', 0);
     define('PAPER_PURCHASES_VALUE', 90);
     define('COFFEE_SPEND_VALUE', 90);
+
+    define('PRODUCE_DATA_VALUE', 6.5);
+    define('WHOLE_GRAIN_VALUE', 2.7);
+    define('DAIRY_VALUE', 2.9);
+    define('ANIMAL_PROTEIN_VALUE', 2.5);
+    define('PLANT_PROTEIN_VALUE', 1.5);
+    define('SUGAR_VALUE', 0.4);
+    define('PLANT_OIL_VALUE', 0.6);
+
     define('MEAT_MFR_CAT_CODE', array('MCC-10034', 'MCC-10041', 'MCC-10048', 'MCC-10053', 'MCC-10066', 'MCC-10069'));
     define('PAPER_MFR_CAT_CODE', array('MCC-10032', 'MCC-10058', 'MCC-10070'));
     define('COFFEE_MFR_CAT_CODE', array('MCC-10097'));

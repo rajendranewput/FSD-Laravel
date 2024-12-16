@@ -17,6 +17,7 @@ use App\Http\Controllers\SapHierarchyController;
 use App\Http\Controllers\GoogleAnalyticsController;
 use App\Http\Controllers\DecreasingDeforestationController;
 use App\Http\Controllers\EmphasizePlantController;
+use App\Http\Controllers\WellnessPlateController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -40,3 +41,4 @@ Route::post('/sap-hierarchy', [SapHierarchyController::class, 'sapHierarchy']);
 Route::get('/download-csv-report', [GoogleAnalyticsController::class, 'downloadCsvReport']);
 Route::post('/decreasing-deforestation', [DecreasingDeforestationController::class, 'decreasingDeforestation']);
 Route::post('/emphasize-plant-proteins', [EmphasizePlantController::class, 'emphasizePlant']);
+Route::post('/wellness-plate', [WellnessPlateController::class, 'wellnessPlate']);
