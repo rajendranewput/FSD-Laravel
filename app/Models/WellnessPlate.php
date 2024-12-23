@@ -28,60 +28,60 @@ class WellnessPlate extends Model
 
             $plantArray = ['31', '32', '33'];
             $produceData = self::getPlateData($date, $costCenter, $campusFlag, $year, $fytd, $plantArray, $item2);
-            $produceMeta = $this->getColorThreshold($produceData, PRODUCE_DATA);
+            $produceMeta = $this->getColorThreshold($produceData, 6.5, TRUE, TRUE);
             
             $plantArray = ['26', '27'];
             $wholeGrain = self::getPlateData($date, $costCenter, $campusFlag, $year, $fytd, $plantArray, $item2);
-            $wholeGrainMeta = $this->getColorThreshold($wholeGrain, WHOLE_GRAIN);
+            $wholeGrainMeta = $this->getColorThreshold($wholeGrain, 2.7, TRUE, TRUE);
             $plantArray = ['18', '19'];
             $dairy = self::getPlateData($date, $costCenter, $campusFlag, $year, $fytd, $plantArray, $item2);
-            $dairyMeta = $this->getColorThreshold($dairy, DAIRY);
+            $dairyMeta = $this->getColorThreshold($dairy, 2.9, FALSE, FALSE);
             $plantArray = ['10', '11', '12', '13', '14', '15', '16', '17'];
             $animalProtiean = self::getPlateData($date, $costCenter, $campusFlag, $year, $fytd, $plantArray, $item2);
-            $animalProtieanMeta = $this->getColorThreshold($animalProtiean, ANIMAL_PROTEIN);
+            $animalProtieanMeta = $this->getColorThreshold($animalProtiean, 2.5, FALSE, FALSE);
             $plantArray = ['22', '23', '24', '25'];
             $plantProtiean = self::getPlateData($date, $costCenter, $campusFlag, $year, $fytd, $plantArray, $item2);
-            $plantProtieanMeta = $this->getColorThreshold($plantProtiean, PLANT_PROTEIN);
+            $plantProtieanMeta = $this->getColorThreshold($plantProtiean, 1.5, TRUE, TRUE);
             $plantArray = ['36'];
             $sugar = self::getPlateData($date, $costCenter, $campusFlag, $year, $fytd, $plantArray, $item2);
-            $sugarMeta = $this->getColorThreshold($sugar, SUGAR);
+            $sugarMeta = $this->getColorThreshold($sugar, 0.4, FALSE, FALSE);
             $plantArray = ['34'];
             $plantOil = self::getPlateData($date, $costCenter, $campusFlag, $year, $fytd, $plantArray, $item2);
-            $plantOilMeta = $this->getColorThreshold($plantOil, PLANT_OIL);
+            $plantOilMeta = $this->getColorThreshold($plantOil, 0.6, FALSE, FALSE);
             $produceArr = array(
                 'value' => $produceData,
-                'color' => $produceMeta,
-                'circle_fill' => '',
+                'color' => $produceMeta['color'],
+                'circle_fill' => $produceMeta['circle_fill'],
             );
             $wholeGrainArr = array(
                 'value' => $wholeGrain,
-                'color' => $wholeGrainMeta,
-                'circle_fill' => '',
+                'color' => $wholeGrainMeta['color'],
+                'circle_fill' => $wholeGrainMeta['circle_fill'],
             );
             $dairyArr = array(
                 'value' => $dairy,
-                'color' => $dairyMeta,
-                'circle_fill' => 'Full',
+                'color' => $dairyMeta['color'],
+                'circle_fill' => $dairyMeta['circle_fill'],
             );
             $animalProtieanArr = array(
                 'value' => $animalProtiean,
-                'color' => $animalProtieanMeta,
-                'circle_fill' => 'Full',
+                'color' => $animalProtieanMeta['color'],
+                'circle_fill' => $animalProtieanMeta['circle_fill'],
             );
             $plantProtieanArr = array(
                 'value' => $plantProtiean,
-                'color' => $plantProtieanMeta,
-                'circle_fill' => '',
+                'color' => $plantProtieanMeta['color'],
+                'circle_fill' => $plantProtieanMeta['circle_fill'],
             );
             $sugarArr = array(
                 'value' => $sugar,
-                'color' => $sugarMeta,
-                'circle_fill' => 'Full',
+                'color' => $sugarMeta['color'],
+                'circle_fill' => $sugarMeta['circle_fill'],
             );
             $plantOilArr = array(
                 'value' => $plantOil,
-                'color' => $plantOilMeta,
-                'circle_fill' => 'Full',
+                'color' => $plantOilMeta['color'],
+                'circle_fill' => $plantOilMeta['circle_fill'],
             );
             $data = array(
                 'produce_data' => $produceArr,
@@ -128,5 +128,32 @@ class WellnessPlate extends Model
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+    public function getColorThreshold($calculation, $goal, $is_cirlce_fill, $is_goal_greater){
+        $color = '';
+        $circle_fill = 0;
+        if(isset($calculation)){
+            if($is_cirlce_fill == TRUE){
+                $circle_fill = round($calculation / $goal *100, 1);
+            }
+            if($is_goal_greater){
+                if($calculation >= $goal){
+                    $color = '#63BF87';
+                    $circle_fill = 'Full';
+                } else {
+                    $color = '#E5E56B';
+                }
+            } else {
+                if($calculation > $goal){
+                    $color = '#E5E56B';
+                } else {
+                    $color = '#63BF87';
+                    $circle_fill = 'Full';
+                }
+            }
+        } else {
+            $circle_fill = 'Full';
+        }
+        return array('color' => $color, 'circle_fill' => $circle_fill);
     }
 }
