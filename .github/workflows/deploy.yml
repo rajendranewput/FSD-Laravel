@@ -23,12 +23,12 @@ jobs:
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOST }} << 'EOF'
-        cd /var/www/html
+        cd /var/www/html/FSD-Laravel
         git pull origin main
         docker-compose down
         docker-compose build
         docker-compose up -d
-        docker exec laravel-app php artisan migrate --force
-        docker exec laravel-app php artisan config:clear
-        docker exec laravel-app php artisan cache:clear
+        docker exec fsd-laravel-web-1 php artisan migrate --force
+        docker exec fsd-laravel-web-1 php artisan config:clear
+        docker exec fsd-laravel-web-1 php artisan cache:clear
         EOF
