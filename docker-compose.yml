@@ -1,61 +1,38 @@
 services:
-    laravel.test:
-        build:
-            context: ./vendor/laravel/sail/runtimes/8.3
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '1000'
-        image: sail-8.3/app
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        ports:
-            - '8080:80'
-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
-        environment:
-            WWWUSER: '1000'
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
-            IGNITION_LOCAL_SITES_PATH: '${PWD}'
-        volumes:
-            - '.:/var/www/html'
-        networks:
-            - sail
-        depends_on:
-            - mysql
+  web:
+    image: app-name:latest
+    build:
+      target: web
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+  
+  db:
+    platform: "linux/amd64"
+    image: mysql:5.7
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
 
-    
-    mysql:
-        image: mysql:8.0
-        ports:
-        - '3306:3306'
-        environment:
-            MYSQL_ROOT_PASSWORD: root_password
-            MYSQL_DATABASE: laravel
-            MYSQL_USER: sail
-            MYSQL_PASSWORD: secret
-
-    phpmyadmin:
-        image: phpmyadmin:latest
-        ports:
-        - '8081:80'  # phpMyAdmin accessible at localhost:8081
-        environment:
-            PMA_HOST: mysql  # This is the MySQL service name in this file
-            PMA_USER: sail    # Username for MySQL
-            PMA_PASSWORD: secret  # Password for MySQL
-        depends_on:
-            - mysql
-
-    redis:
-        image: redis:alpine
-        ports:
-        - '6379:6379'
-        networks:
-        - sail
-
-networks:
-    sail:
-        driver: bridge
 volumes:
-    sail-mysql:
-        driver: local
+  dbdata:

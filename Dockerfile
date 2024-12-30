@@ -1,57 +1,40 @@
-# Use an official PHP image as a parent image
-FROM php:8.3-fpm
+# Use PHP with Apache as the base image
+FROM php:8.2-apache as web
 
-# Arguments provided in docker-compose.yml
-ARG WWWGROUP
-ARG WWWUSER
-
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Install system dependencies
+# Install Additional System Dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
-    zip \
-    unzip \
-    git \
-    libonig-dev \
-    libxml2-dev \
-    libpq-dev \
     libzip-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libmcrypt-dev \
-    libcurl4-openssl-dev \
-    libssl-dev \
-    supervisor \
-    vim \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets \
-    && docker-php-ext-enable sockets
+    zip
+    
+# Install Redis extension
+RUN pecl install redis && docker-php-ext-enable redis
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set up working directory
-WORKDIR /var/www/html
+# Enable Apache mod_rewrite for URL rewriting
+RUN a2enmod rewrite
 
-# Copy application code to the container
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql zip
+
+# Configure Apache DocumentRoot to point to Laravel's public directory
+# and update Apache configuration files
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Copy the application code
 COPY . /var/www/html
 
+# Set the working directory
+WORKDIR /var/www/html
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install project dependencies
+RUN composer install --no-scripts --no-dev
+
 # Set permissions
-RUN chown -R $WWWUSER:$WWWGROUP /var/www/html
-
-# Install Node.js and npm
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && apt-get install -y nodejs
-
-# Install Laravel Sail (optional)
-RUN composer global require laravel/sail --prefer-dist
-
-# Add global Composer binaries to PATH
-ENV PATH="${PATH}:/root/.composer/vendor/bin"
-
-# Expose port 80
-EXPOSE 80
-
-# Start the PHP-FPM server
-CMD ["php-fpm"]
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
