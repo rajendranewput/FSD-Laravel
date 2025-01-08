@@ -37,17 +37,13 @@ class WellnessPlateController extends Controller
             } else {
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
-            // Emphasize Bar Graph Data
+            // Wellness Plate Data
             $wellnessPlate = new WellnessPlate();
-            $emphasizeBarGraphData = $wellnessPlate->getWellnessPlateData($date, $costCenter, $request->campus_flag, $year, $fytd);
+            $wellnessPlateData = $wellnessPlate->getWellnessPlateData($date, $costCenter, $request->campus_flag, $year, $fytd);
             
             return response()->json([
                 'status' => 'success',
-                'data' => [
-                    'bar_chart_data' => [
-                        $emphasizeBarGraphData
-                    ]
-                ],
+                'data' => $wellnessPlateData,
             ], 200);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

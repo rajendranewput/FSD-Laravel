@@ -19,6 +19,7 @@ use App\Http\Controllers\DecreasingDeforestationController;
 use App\Http\Controllers\EmphasizePlantController;
 use App\Http\Controllers\WellnessPlateController;
 use App\Http\Controllers\WBIController;
+use App\Http\Controllers\WholeFoodChartController;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -44,3 +45,4 @@ Route::post('/decreasing-deforestation', [DecreasingDeforestationController::cla
 Route::post('/emphasize-plant-proteins', [EmphasizePlantController::class, 'emphasizePlant']);
 Route::post('/wellness-plate', [WellnessPlateController::class, 'wellnessPlate']);
 Route::post('/wbi', [WBIController::class, 'wbiData']);
+Route::post('/whole-food-bar-chart', [WholeFoodChartController::class, 'wholeFood']);

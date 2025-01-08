@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 use App\Traits\DateHandlerTrait;
 use App\Traits\PurchasingTrait;
 use Illuminate\Support\Facades\Redis;
-use App\Models\WBI;
+use App\Models\WholeFoodChart;
 use DateTime;
 
-class WBIController extends Controller
+class WholeFoodChartController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
-    public function wbiData(Request $request){
+    public function wholeFood(Request $request){
         
         try{
             $year = $request->year;
@@ -37,14 +37,15 @@ class WBIController extends Controller
             } else {
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
-            // Emphasize Bar Graph Data
-            $wbi = new WBI();
-            $wbiData = $wbi->getWBIData($date, $costCenter, $request->campus_flag, $year, $fytd);
+            // Whole Food Bar Chart Data
+            $wholeFoodChartData = WholeFoodChart::getWholeFoodChartData($date, $costCenter, $request->campus_flag, $year, $fytd);
             
             return response()->json([
                 'status' => 'success',
                 'data' => [
-                    'wbi_section_data' => $wbiData
+                    'bar_chart_data' => [
+                        $wholeFoodChartData
+                    ]
                 ],
             ], 200);
         } catch(\Exception $e) {
