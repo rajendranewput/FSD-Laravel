@@ -79,4 +79,116 @@ trait PurchasingTrait
         }
         return $result;
     }
+    public function getCategory() {
+        $category = array(
+            array(
+                "name" => "Circle Of Responsibility",
+                "key" => "circle",
+                "subcategories" => array(
+                    array(
+                        "name" => "Total",
+                        "key" => "total",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Ground Beef",
+                        "key" => "ground_beef",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Chicken",
+                        "key" => "chicken",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Turkey",
+                        "key" => "turkey",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Pork",
+                        "key" => "pork",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Eggs",
+                        "key" => "eggs",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Milk & Yogurt",
+                        "key" => "milk_yogurt",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Fish & Seafood",
+                        "key" => "fish_seafood",
+                        "is_dummy" => false
+                    )
+                )
+            ),
+            array(
+                "name" => "Farm To Fork",
+                "key" => "farm_to_fork",
+                "subcategories" => array(
+                    array(
+                        "name" => "Period",
+                        "key" => "periods",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Year To Date",
+                        "key" => "year_to_date",
+                        "is_dummy" => false
+                    )
+                )
+            ),
+            array(
+                "name" => "Cooked From Scratch",
+                "key" => "cooked_scratch",
+                "subcategories" => array(
+                    array(
+                        "name" => "Cooked",
+                        "key" => "cooked",
+                        "is_dummy" => true
+                    )
+                )
+            ),
+            array(
+                "name" => "Leakage From Reporting Vendors",
+                "key" => "leakage_vendor",
+                "subcategories" => array(
+                    array(
+                        "name" => "Leakage",
+                        "key" => "leakage",
+                        "is_dummy" => true
+                    )
+                )
+            ),
+            array(
+                "name" => "Purchasing Data Visibility",
+                "key" => "purchasing_data_visibility",
+                "subcategories" => array(
+                    array(
+                        "name" => "Pdv Total",
+                        "key" => "pdv_total",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Seafood",
+                        "key" => "seafood",
+                        "is_dummy" => false
+                    ),
+                    array(
+                        "name" => "Meat",
+                        "key" => "meat",
+                        "is_dummy" => false
+                    )
+                )
+            ),
+        );
+
+        return $category;
+
+    }
 }
