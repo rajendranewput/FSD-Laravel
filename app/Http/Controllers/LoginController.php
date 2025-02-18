@@ -69,7 +69,7 @@ class LoginController extends Controller
         foreach($campusTeamName as $campusVal){
             Redis::set('cost_campus'.$campusVal, json_encode($campusCost[$campusVal]));
         }
-
+        
     }
 }
 
