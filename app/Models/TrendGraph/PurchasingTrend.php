@@ -112,7 +112,7 @@ class PurchasingTrend extends Model
     public static function f2fFytdDates($year)
     {
         // Fetch data using the query builder
-        $data = DB::table('dashboard_fiscal_periods as df')
+        $data = DB::connection('mysql_second')->table('dashboard_fiscal_periods as df')
             ->select([
                 'df.end_date',
                 'df.nickname',
@@ -199,7 +199,7 @@ class PurchasingTrend extends Model
         return $results;
     }
     static function getFiscalPeriodsData($year){
-        $results = DB::table('dashboard_fiscal_periods')
+        $results = DB::connection('mysql_second')->table('dashboard_fiscal_periods')
             ->select([
                 'start_date', 
                 'end_date', 
@@ -216,7 +216,7 @@ class PurchasingTrend extends Model
     }
 
     static function getPurchasingDate(){
-        $result = DB::table('purchases')
+        $result = DB::connection('mysql_second')->table('purchases_meta')
             ->selectRaw('MAX(processing_month_date) as processing_month_date')
             ->groupBy('processing_month_date')
             ->get();
