@@ -10,7 +10,7 @@ class Login extends Model
 {
     use HasFactory;
     static function getSectorCostCenters($teamName){
-        $data = DB::connection('mysql_second')->table('wn_costcenter as w')
+        $data = DB::table('wn_costcenter as w')
         ->select('w.team_name')
         ->join('cafes as c', function($join) {
             $join->on('w.team_name', '=', 'c.cost_center')
@@ -24,7 +24,7 @@ class Login extends Model
     }
 
     static function getSectorRvp($sectorCostCenter){
-        $data = DB::connection('mysql_second')->table('wn_costcenter as w')
+        $data = DB::table('wn_costcenter as w')
         ->select('r.team_name')
         ->leftJoin('wn_region as r', 'r.team_name', '=', 'w.region_name')
         ->whereIn('w.team_name', $sectorCostCenter)
@@ -34,7 +34,7 @@ class Login extends Model
     }
     static function getRvpCostCenter($rvpName){
         
-        $rvp = DB::connection('mysql_second')->table('wn_costcenter as w')
+        $rvp = DB::table('wn_costcenter as w')
         ->select('w.team_name', 'w.region_name')
         ->Join('wn_region as r', 'r.team_name', '=', 'w.region_name')
         ->join('cafes as c', function($join) {
@@ -50,7 +50,7 @@ class Login extends Model
     }
 
     static function getSectorDm($sectorCostCenter){
-        $data = DB::connection('mysql_second')->table('wn_costcenter as w')
+        $data = DB::table('wn_costcenter as w')
         ->select('d.team_name')
         ->leftJoin('wn_district as d', 'd.team_name', '=', 'w.district_name')
         ->whereIn('w.team_name', $sectorCostCenter)
@@ -61,7 +61,7 @@ class Login extends Model
     }
     static function getDmCostCenter($dmName){
        
-        $dm = DB::connection('mysql_second')->table('wn_costcenter as w')
+        $dm = DB::table('wn_costcenter as w')
         ->select('w.team_name', 'w.district_name')
         ->Join('wn_district as d', 'd.team_name', '=', 'w.district_name')
         ->join('cafes as c', function($join) {
@@ -76,7 +76,7 @@ class Login extends Model
         return $dm;
     }
     static function getSectorAccounts($sectorCostCenter){
-        $data = DB::connection('mysql_second')->table('accounts as a')
+        $data = DB::table('accounts as a')
         ->select('a.account_id')
         ->leftJoin('cafes as c', 'c.account_id', '=', 'a.account_id')
         ->whereIn('c.cost_center', $sectorCostCenter)
@@ -86,7 +86,7 @@ class Login extends Model
         return $data;
     }
     static function getAccountCostCenter($accountId){
-        $data = DB::connection('mysql_second')->table('cafes as c')
+        $data = DB::table('cafes as c')
         ->select('c.cost_center', 'c.account_id')
         ->whereIn('c.account_id', $accountId)
         ->where('c.display_foodstandard', '=', 'Yes')
@@ -98,7 +98,7 @@ class Login extends Model
         return $data;
     }
     static function getSectorCampus($sectorCostCenter){
-        $data = DB::connection('mysql_second')->table('accounts_locations as a')
+        $data = DB::table('accounts_locations as a')
         ->select('a.location_id')
         ->leftJoin('cafes as c', 'c.location_id', '=', 'a.location_id')
         ->whereIn('c.cost_center', $sectorCostCenter)
@@ -108,7 +108,7 @@ class Login extends Model
         return $data;
     }
     static function getCampusCostCenter($campusId){
-        $data = DB::connection('mysql_second')->table('cafes as c')
+        $data = DB::table('cafes as c')
         ->select('c.cost_center', 'c.location_id')
         ->whereIn('c.location_id', $campusId)
         ->where('c.display_foodstandard', '=', 'Yes')

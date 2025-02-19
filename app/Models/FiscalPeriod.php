@@ -11,7 +11,7 @@ class FiscalPeriod extends Model
     use HasFactory;
 
     static function getyears(){
-        $data = DB::connection('mysql_second')->table('dashboard_fiscal_periods')
+        $data = DB::table('dashboard_fiscal_periods')
         ->select('fiscal_year')
         ->where('fiscal_year', '!=', '2015')
         ->groupBy('fiscal_year')
@@ -21,7 +21,7 @@ class FiscalPeriod extends Model
     static function getPeriod($cost_center, $year, $latest){
         
         $todayDate = date('Y-m-01');
-        $data = DB::connection('mysql_second')->table('dashboard_fiscal_periods')
+        $data = DB::table('dashboard_fiscal_periods')
         ->select('fiscal_period', 'end_date', 'start_date')
         ->where('fiscal_year', $year)
         ->where(DB::raw('DATE_FORMAT(STR_TO_DATE(end_date, "%m/%d/%Y"), "%Y-%m-01")'), '<=', $todayDate)
