@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 
 
 Route::get('/', function () {
-    $data = DB::connection('mysql_second')->table('wn_costcenter')->get();
+    $data = DB::table('wn_costcenter')->select('team_name')->get();
     print_r($data);
     die;
 });
