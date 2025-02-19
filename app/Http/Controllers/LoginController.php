@@ -39,7 +39,11 @@ class LoginController extends Controller
             $dmCost[$dm->district_name][] = $dm->team_name;
         }
         foreach($dmTeamName as $dmVal){
-            Redis::set('cost_'.$dmVal, json_encode($dmCost[$dmVal]));
+            if (isset($dmCost[$dmVal])) {
+                Redis::set('cost_'.$dmVal, json_encode($dmCost[$dmVal]));
+            } else {
+                Redis::set('cost_'.$dmVal, null);
+            }
         }
 
         //accounts costcenter
