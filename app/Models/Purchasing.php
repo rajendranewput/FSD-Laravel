@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use App\Traits\PurchasingTrait;
+
 
 class Purchasing extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, PurchasingTrait;
 
     // To fetch farm to fork data
     public static function farmToForkData($request, $costCenters, $date, $campusRollUp, $type, $fytdPeriods){
@@ -275,5 +277,20 @@ class Purchasing extends Model
         );
        
         return $dataArray;
+    }
+    
+    static function getTicks($date, $costCenter, $campus_flag, $year){
+        $tableName = 'trend_purchasing_' . intval($year);
+        
+        // Execute the query
+        $results = DB::table($tableName)
+            ->selectRaw('category, SUM(first_spend) as total_first_spend, SUM(second_spend) as total_second_spend')
+            ->whereIn('cost_center', $costCenter)
+            ->whereNotIn('category', ['pdv_total', 'seafood', 'meat'])
+            ->groupBy('category')
+            ->get();
+        
+        
+        return $results;
     }
 }
