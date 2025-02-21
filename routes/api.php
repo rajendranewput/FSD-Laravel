@@ -22,7 +22,7 @@ use App\Http\Controllers\WBIController;
 use App\Http\Controllers\WholeFoodChartController;
 use App\Http\Controllers\TrendGraphController;
 use App\Http\Controllers\TicksController;
-
+use App\Http\Controllers\AnimalProteinsPerMealController;
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
@@ -50,4 +50,5 @@ Route::post('/wbi', [WBIController::class, 'wbiData']);
 Route::post('/whole-food-bar-chart', [WholeFoodChartController::class, 'wholeFood']);
 Route::post('/trend-purchasing', [TrendGraphController::class, 'purcahasingTrendGraph']);
 Route::post('/ticks', [TicksController::class, 'ticks']);
+Route::post('/animal-proteins-per-meal', [AnimalProteinsPerMealController::class, 'animalProteinsPerMeal']);
 
