@@ -133,7 +133,7 @@ trait PurchasingTrait
                 "subcategories" => array(
                     array(
                         "name" => "Period",
-                        "key" => "periods",
+                        "key" => "period",
                         "is_dummy" => false
                     ),
                     array(
@@ -145,7 +145,7 @@ trait PurchasingTrait
             ),
             array(
                 "name" => "Cooked From Scratch",
-                "key" => "cooked_scratch",
+                "key" => "cooked_from_scratch",
                 "subcategories" => array(
                     array(
                         "name" => "Cooked",
@@ -156,7 +156,7 @@ trait PurchasingTrait
             ),
             array(
                 "name" => "Leakage From Reporting Vendors",
-                "key" => "leakage_vendor",
+                "key" => "leakage_from_reporting_vendors",
                 "subcategories" => array(
                     array(
                         "name" => "Leakage",

@@ -119,7 +119,7 @@ class TrendGraphController extends Controller
         $formToFork = PurchasingTrend::getFormToForkTrend($year, $costCenter);
         $farmToForkYear = PurchasingTrend::getFormToForkTrendYTD($year, $costCenter);
         if(!empty($formToFork)) {
-            $finalData['periods'] = $formToFork;
+            $finalData['period'] = $formToFork;
             $finalData['year_to_date'] = $farmToForkYear;
         }
         $leakageFromVendor = PurchasingTrend::getLeakageTrend($year, $costCenter);
