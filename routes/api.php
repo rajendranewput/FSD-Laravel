@@ -51,4 +51,6 @@ Route::post('/whole-food-bar-chart', [WholeFoodChartController::class, 'wholeFoo
 Route::post('/trend-purchasing', [TrendGraphController::class, 'purcahasingTrendGraph']);
 Route::post('/ticks', [TicksController::class, 'ticks']);
 Route::post('/animal-proteins-per-meal', [AnimalProteinsPerMealController::class, 'animalProteinsPerMeal']);
+Route::post('/check-for-popups', [FiscalPeriodController::class, 'checkForPopups']);
+
 
