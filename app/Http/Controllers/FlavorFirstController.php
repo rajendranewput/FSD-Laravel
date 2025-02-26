@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\widgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Traits\PurchasingTrait;
 use Illuminate\Support\Facades\Redis;
@@ -16,8 +16,9 @@ class FlavorFirstController extends Controller
     //
     use DateHandlerTrait;
 
-    public function export(Request $request){
+    public function export(widgetRequest $request){
         ini_set('memory_limit', '1024M');
+        $validated = $request->validated();
         try{
             $year = $request->year;
             $campusFlag = $request->campus_flag;

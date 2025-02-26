@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\widgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Traits\PurchasingTrait;
 use Illuminate\Support\Facades\Redis;
@@ -13,8 +13,8 @@ class WholeFoodChartController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
-    public function wholeFood(Request $request){
-        
+    public function wholeFood(widgetRequest $request){
+        $validated = $request->validated();
         try{
             $year = $request->year;
             $fytd = $request->fytd;

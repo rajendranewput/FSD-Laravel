@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\widgetRequest;
 use App\Traits\DateHandlerTrait;
 use Illuminate\Support\Facades\Redis;
 use App\Models\TrimmingTransportation;
@@ -13,8 +13,8 @@ class TrimmingTransportationController extends Controller
     //
     use DateHandlerTrait;
 
-    public function trimmingTransportation(Request $request){
-        
+    public function trimmingTransportation(widgetRequest $request){
+        $validated = $request->validated();
         try{
             $year = $request->year;
             $fytd = $request->fytd;
