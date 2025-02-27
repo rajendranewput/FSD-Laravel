@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\widgetRequest;
 use App\Traits\DateHandlerTrait;
 use Illuminate\Support\Facades\Redis;
 use App\Models\AnimalProteinsPerMeal;
@@ -14,7 +14,8 @@ class AnimalProteinsPerMealController extends Controller
     //
     use DateHandlerTrait;
 
-    public function animalProteinsPerMeal(Request $request){
+    public function animalProteinsPerMeal(widgetRequest $request){
+        $validated = $request->validated();
         
         try{
             $year = $request->year;
