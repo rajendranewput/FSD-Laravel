@@ -13,9 +13,10 @@ class CorController extends Controller
     use DateHandlerTrait, PurchasingTrait;
 
     public function CorData(widgetRequest $request){
-        set_time_limit(120);
+        //set_time_limit(120);
        
         $validated = $request->validated();
+        
         try{
             $year = $request->year;
             $date = $this->handleDates($request->end_date, $request->campus_flag);

@@ -23,6 +23,7 @@ use App\Http\Controllers\WholeFoodChartController;
 use App\Http\Controllers\TrendGraphController;
 use App\Http\Controllers\TicksController;
 use App\Http\Controllers\AnimalProteinsPerMealController;
+use App\Http\Controllers\FsdHierarchyController;
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
@@ -52,5 +53,6 @@ Route::post('/trend-purchasing', [TrendGraphController::class, 'purcahasingTrend
 Route::post('/ticks', [TicksController::class, 'ticks']);
 Route::post('/animal-proteins-per-meal', [AnimalProteinsPerMealController::class, 'animalProteinsPerMeal']);
 Route::post('/check-for-popups', [FiscalPeriodController::class, 'checkForPopups']);
-
+Route::post('/sector-drop-down-data', [FsdHierarchyController::class, 'sectorData']);
+Route::post('/sector-hierarchy-data', [FsdHierarchyController::class, 'sectorHierarchyData']);
 

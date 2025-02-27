@@ -22,10 +22,12 @@ class widgetRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'team_name' => 'required',
             'end_date' => 'required|date',
             'campus_flag' => 'required|integer',
             'type' => 'required|string',
             'login_as' => 'required|string',
+            'year' => 'required|integer'
         ];
     }
 }

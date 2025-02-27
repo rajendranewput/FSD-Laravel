@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\widgetRequest;
 use App\Models\FiscalPeriod;
 use Illuminate\Support\Facades\Redis;
 
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Redis;
 class FiscalPeriodController extends Controller
 {
     //
-    public function getFiscalYear(Request $request){
+    public function getFiscalYear(widgetRequest $request){
         try{
             $data = FiscalPeriod::getyears();
             return response()->json([
@@ -22,7 +22,7 @@ class FiscalPeriodController extends Controller
         }
 
     }
-    public function getFiscalPeriod(Request $request){
+    public function getFiscalPeriod(widgetRequest $request){
         try{
             if($request->type == 'campus'){
                 $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
@@ -39,7 +39,9 @@ class FiscalPeriodController extends Controller
         }
 
     }
-    public function checkForPopups(Request $request){
+    public function checkForPopups(widgetRequest $request){
+        $validated = $request->validated();
+
         try{
             if($request->type == 'campus'){
                 $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
