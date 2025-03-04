@@ -99,6 +99,10 @@ class FSD extends Model
             if($dm != null){
                 $data->where('w.district_name', $dm);
             }
+            if($account != null){
+                $data->where('a.account_id', $dm);
+            }
+            
         }
         if ($type === 'cafe') {
             $data->where('c.cost_center', $teamName);
@@ -107,6 +111,12 @@ class FSD extends Model
             }
             if($dm != null){
                 $data->where('w.district_name', $dm);
+            }
+            if($account != null){
+                $data->where('a.account_id', $dm);
+            }
+            if($campus != null){
+                $data->where('al.location_id', $dm);
             }
         }
 
@@ -163,6 +173,65 @@ class FSD extends Model
             return $data;
     }
 
-    
-    
+    static function getAccountTree($accountId){
+        $data = DB::table('cafes as c')
+            ->select('al.name as location_name', 'al.location_id', 'c.name as cafe_name', 'c.cost_center', 'a.name as account_name', 'a.account_id')
+            ->join('accounts_locations as al', 'al.location_id', '=', 'c.location_id')
+            ->join('accounts as a', 'a.account_id', '=', 'al.account_id')
+            ->where('c.account_id', $accountId)
+            ->where('c.display_foodstandard', 'Yes')
+            ->groupBy('c.cost_center', 'c.name', 'al.location_id', 'a.account_id', 'al.name', 'a.name')
+            ->get();
+
+        // Transform into hierarchical array
+        $tree = [];
+
+        foreach ($data as $row) {
+            // Add account if not exists
+            if (!isset($tree[$row->account_id])) {
+                $tree[$row->account_id] = [
+                    'account_id' => $row->account_id,
+                    'account_name' => $row->account_name,
+                    'campuses' => []
+                ];
+            }
+
+            // Add campus if not exists
+            if (!isset($tree[$row->account_id]['campuses'][$row->location_id])) {
+                $tree[$row->account_id]['campuses'][$row->location_id] = [
+                    'location_id' => $row->location_id,
+                    'location_name' => $row->location_name,
+                    'cafes' => []
+                ];
+            }
+
+            // Add cafe under the respective campus
+            $tree[$row->account_id]['campuses'][$row->location_id]['cafes'][] = [
+                'cost_center' => $row->cost_center,
+                'cafe_name' => $row->cafe_name
+            ];
+        }
+
+        // Convert campuses from associative array to indexed array
+        foreach ($tree as &$account) {
+            $account['campuses'] = array_values($account['campuses']);
+        }
+
+        // Final structured tree
+        $tree = array_values($tree);
+
+        print_r($tree);
+        die;
+
+            
+        
+    }
+    static function getAccountIdByLocation($locationId){
+        $account = DB::table('accounts_locations')
+        ->select('account_id')
+        ->where('location_id', $locationId)
+        ->groupBy('account_id')
+        ->first();
+        return $account->account_id;
+    }
 }

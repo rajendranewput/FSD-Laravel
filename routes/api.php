@@ -55,4 +55,5 @@ Route::post('/animal-proteins-per-meal', [AnimalProteinsPerMealController::class
 Route::post('/check-for-popups', [FiscalPeriodController::class, 'checkForPopups']);
 Route::post('/sector-drop-down-data', [FsdHierarchyController::class, 'sectorData']);
 Route::post('/sector-hierarchy-data', [FsdHierarchyController::class, 'sectorHierarchyData']);
+Route::post('/account-hierarchy-data', [FsdHierarchyController::class, 'accountHierarchy']);
 

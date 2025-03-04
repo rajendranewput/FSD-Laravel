@@ -75,7 +75,7 @@ class FsdHierarchyController extends Controller
         ];
         
         $type = $request->type;
-        $validTypes = ['rvp', 'dm', 'account'];
+        $validTypes = ['sector', 'rvp', 'dm', 'account', 'campuse', 'cafe'];
         
         if (!in_array($type, $validTypes)) {
             return response()->json(['error' => 'Invalid type'], 400);
@@ -130,4 +130,10 @@ class FsdHierarchyController extends Controller
             'data' => $finalData,
         ], 200);
     }
+
+    public function accountHierarchy(Request $request){
+        $accountId = FSD::getAccountIdByLocation($request->location_id);
+        $data = FSD::getAccountTree($accountId);
+    }
+
 }
