@@ -134,6 +134,10 @@ class FsdHierarchyController extends Controller
     public function accountHierarchy(Request $request){
         $accountId = FSD::getAccountIdByLocation($request->location_id);
         $data = FSD::getAccountTree($accountId);
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+        ], 200);
     }
 
 }

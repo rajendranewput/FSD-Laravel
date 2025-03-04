@@ -175,12 +175,14 @@ class FSD extends Model
 
     static function getAccountTree($accountId){
         $data = DB::table('cafes as c')
-            ->select('al.name as location_name', 'al.location_id', 'c.name as cafe_name', 'c.cost_center', 'a.name as account_name', 'a.account_id', 'c.exempt_waste')
+            ->select('al.name as location_name', 'al.location_id', 'c.name as cafe_name', 'c.cost_center', 'a.name as account_name', 'a.account_id', 'c.exempt_waste', 'w.content_submitted')
             ->join('accounts_locations as al', 'al.location_id', '=', 'c.location_id')
             ->join('accounts as a', 'a.account_id', '=', 'al.account_id')
+            ->leftJoin('waste_profile as w', 'w.costcenter_id', '=', 'c.cost_center')
             ->where('c.account_id', $accountId)
-            ->where('c.display_foodstandard', 'Yes')
-            ->groupBy('c.cost_center', 'c.name', 'al.location_id', 'a.account_id', 'al.name', 'a.name')
+            ->whereNot('c.cost_center', 0)
+            ->whereNot('c.cost_center', null)
+            ->groupBy('c.cost_center', 'c.name', 'al.location_id', 'a.account_id', 'al.name', 'a.name', 'c.exempt_waste', 'w.content_submitted')
             ->get();
 
         // Transform into hierarchical array
@@ -204,11 +206,18 @@ class FSD extends Model
                     'cafes' => []
                 ];
             }
-
+            $border = 'none';
+            $message = 'none';
+            if($row->content_submitted == 0 && $row->exempt_waste == 'N'){
+                $border = 'red';
+                $message = 'OOPS: waste programs profile is incomplete';
+            }
             // Add cafe under the respective campus
             $tree[$row->account_id]['campuses'][$row->location_id]['cafes'][] = [
                 'cost_center' => $row->cost_center,
-                'cafe_name' => $row->cafe_name
+                'cafe_name' => $row->cafe_name,
+                'border' => $border,
+                'message' => $message
             ];
         }
 
@@ -216,15 +225,9 @@ class FSD extends Model
         foreach ($tree as &$account) {
             $account['campuses'] = array_values($account['campuses']);
         }
-
         // Final structured tree
         $tree = array_values($tree);
-
-        print_r($tree);
-        die;
-
-            
-        
+        return $tree;
     }
     static function getAccountIdByLocation($locationId){
         $account = DB::table('accounts_locations')
