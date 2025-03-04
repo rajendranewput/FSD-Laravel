@@ -75,7 +75,7 @@ class FsdHierarchyController extends Controller
         ];
         
         $type = $request->type;
-        $validTypes = ['sector', 'rvp', 'dm', 'account', 'campuse', 'cafe'];
+        $validTypes = ['sector', 'rvp', 'dm', 'account', 'campuse', 'cafes'];
         
         if (!in_array($type, $validTypes)) {
             return response()->json(['error' => 'Invalid type'], 400);
