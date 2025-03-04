@@ -46,7 +46,7 @@ class FSD extends Model
     }
 
 
-    static function getDropDown($type, $teamName){
+    static function getDropDown($type, $teamName, $rvp = null, $dm = null){
         $data = DB::table('wn_costcenter as w')
             ->select(
                 'w.team_name', 
@@ -72,18 +72,42 @@ class FSD extends Model
         // Apply conditional filter only if $type is 'rvp'
         if ($type === 'rvp') {
             $data->where('w.region_name', $teamName);
+            if($dm != null){
+                $data->where('w.district_name', $dm);
+            }
         }
         if ($type === 'dm') {
             $data->where('w.district_name', $teamName);
+            if($rvp != null){
+                $data->where('w.region_name', $dm);
+            }
         }
         if ($type === 'account') {
             $data->where('a.account_id', $teamName);
+            if($rvp != null){
+                $data->where('w.region_name', $dm);
+            }
+            if($dm != null){
+                $data->where('w.district_name', $dm);
+            }
         }
         if ($type === 'campus') {
             $data->where('al.location_id', $teamName);
+            if($rvp != null){
+                $data->where('w.region_name', $dm);
+            }
+            if($dm != null){
+                $data->where('w.district_name', $dm);
+            }
         }
         if ($type === 'cafe') {
             $data->where('c.cost_center', $teamName);
+            if($rvp != null){
+                $data->where('w.region_name', $dm);
+            }
+            if($dm != null){
+                $data->where('w.district_name', $dm);
+            }
         }
 
         // Group by actual column names instead of aliases

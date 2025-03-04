@@ -65,7 +65,7 @@ class FsdHierarchyController extends Controller
     }
 
     public function sectorHierarchyData(Request $request){
-        $result = FSD::getDropDown($request->type, $request->team_name);
+        $result = FSD::getDropDown($request->type, $request->team_name, $request->rvp, $request->dm);
         $hierarchyMap = [
             'rvp' => ['sector', 'dm', 'accounts', 'campuses', 'cafes'],
             'dm' => ['sector', 'rvp', 'accounts', 'campuses', 'cafes'],
