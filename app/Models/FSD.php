@@ -46,7 +46,7 @@ class FSD extends Model
     }
 
 
-    static function getDropDown($type, $teamName, $rvp = null, $dm = null){
+    static function getDropDown($type, $teamName, $rvp = null, $dm = null, $account = null, $campus = null){
         $data = DB::table('wn_costcenter as w')
             ->select(
                 'w.team_name', 
@@ -175,7 +175,7 @@ class FSD extends Model
 
     static function getAccountTree($accountId){
         $data = DB::table('cafes as c')
-            ->select('al.name as location_name', 'al.location_id', 'c.name as cafe_name', 'c.cost_center', 'a.name as account_name', 'a.account_id')
+            ->select('al.name as location_name', 'al.location_id', 'c.name as cafe_name', 'c.cost_center', 'a.name as account_name', 'a.account_id', 'c.exempt_waste')
             ->join('accounts_locations as al', 'al.location_id', '=', 'c.location_id')
             ->join('accounts as a', 'a.account_id', '=', 'al.account_id')
             ->where('c.account_id', $accountId)
