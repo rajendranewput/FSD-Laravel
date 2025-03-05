@@ -69,13 +69,13 @@ class FsdHierarchyController extends Controller
         $hierarchyMap = [
             'rvp' => ['sector', 'dm', 'accounts', 'campuses', 'cafes'],
             'dm' => ['sector', 'rvp', 'accounts', 'campuses', 'cafes'],
-            'account' => ['sector', 'rvp', 'dm', 'campuses', 'cafes'],
+            'accounts' => ['sector', 'rvp', 'dm', 'campuses', 'cafes'],
             'campuses' => ['sector', 'rvp', 'dm', 'accounts', 'cafes'],
             'cafes' => ['sector', 'rvp', 'dm', 'accounts', 'campuses'],
         ];
         
         $type = $request->type;
-        $validTypes = ['sector', 'rvp', 'dm', 'account', 'campuse', 'cafes'];
+        $validTypes = ['sector', 'rvp', 'dm', 'accounts', 'campuses', 'cafes'];
         
         if (!in_array($type, $validTypes)) {
             return response()->json(['error' => 'Invalid type'], 400);

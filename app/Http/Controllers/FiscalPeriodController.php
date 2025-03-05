@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Redis;
 class FiscalPeriodController extends Controller
 {
     //
-    public function getFiscalYear(widgetRequest $request){
+    public function getFiscalYear(){
         try{
             $data = FiscalPeriod::getyears();
             return response()->json([
