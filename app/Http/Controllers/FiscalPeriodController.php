@@ -77,4 +77,12 @@ class FiscalPeriodController extends Controller
         }
 
     }
+
+    public function getLatestPeriod(){
+        $data = FiscalPeriod::getLatestPeriod();
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+        ], 200);
+    }
 }

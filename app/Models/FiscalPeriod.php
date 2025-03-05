@@ -180,4 +180,14 @@ class FiscalPeriod extends Model
             $finalCollection = collect($finalData);
             return $finalCollection;
     }
+
+    static function getLatestPeriod(){
+        $result = DB::table('dashboard_aggregates_meta as d')
+        ->select('d.end_date', 'd.start_date', 'dp.nickname', 'dp.fiscal_period', 'dp.fiscal_year')
+        ->join('dashboard_fiscal_periods as dp', 'dp.end_date', '=', 'd.end_date')
+        ->where('d.status', 'CORDATA')
+        ->orderBy('id', 'desc')
+        ->first();
+        return $result;
+    }
 }
