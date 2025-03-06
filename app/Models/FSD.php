@@ -79,13 +79,13 @@ class FSD extends Model
         if ($type === 'dm') {
             $data->where('w.district_name', $teamName);
             if($rvp != null){
-                $data->where('w.region_name', $dm);
+                $data->where('w.region_name', $rvp);
             }
         }
         if ($type === 'account') {
             $data->where('a.account_id', $teamName);
             if($rvp != null){
-                $data->where('w.region_name', $dm);
+                $data->where('w.region_name', $rvp);
             }
             if($dm != null){
                 $data->where('w.district_name', $dm);
@@ -94,29 +94,29 @@ class FSD extends Model
         if ($type === 'campus') {
             $data->where('al.location_id', $teamName);
             if($rvp != null){
-                $data->where('w.region_name', $dm);
+                $data->where('w.region_name', $rvp);
             }
             if($dm != null){
                 $data->where('w.district_name', $dm);
             }
             if($account != null){
-                $data->where('a.account_id', $dm);
+                $data->where('a.account_id', $account);
             }
             
         }
         if ($type === 'cafe') {
             $data->where('c.cost_center', $teamName);
             if($rvp != null){
-                $data->where('w.region_name', $dm);
+                $data->where('w.region_name', $rvp);
             }
             if($dm != null){
                 $data->where('w.district_name', $dm);
             }
             if($account != null){
-                $data->where('a.account_id', $dm);
+                $data->where('a.account_id', $account);
             }
             if($campus != null){
-                $data->where('al.location_id', $dm);
+                $data->where('al.location_id', $campus);
             }
         }
 
@@ -133,8 +133,8 @@ class FSD extends Model
                 'al.name', 
                 'c.location_id',
                 'c.name'
-            )
-            ->get();
+        )->get();
+            
 
         return $data;
     }
