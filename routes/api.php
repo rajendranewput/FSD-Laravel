@@ -24,6 +24,9 @@ use App\Http\Controllers\TrendGraphController;
 use App\Http\Controllers\TicksController;
 use App\Http\Controllers\AnimalProteinsPerMealController;
 use App\Http\Controllers\FsdHierarchyController;
+use App\Http\controllers\popup\PurchasingPopup;
+use App\Http\Controllers\GlcodeController;
+
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
@@ -57,4 +60,10 @@ Route::post('/sector-drop-down-data', [FsdHierarchyController::class, 'sectorDat
 Route::post('/sector-hierarchy-data', [FsdHierarchyController::class, 'sectorHierarchyData']);
 Route::post('/account-hierarchy-data', [FsdHierarchyController::class, 'accountHierarchy']);
 Route::get('/latest-date', [FiscalPeriodController::class, 'getLatestPeriod']);
+Route::post('/cor-total-popup', [PurchasingPopup::class, 'getPopup']);
+Route::post('/get-line-item-popup', [PurchasingPopup::class, 'getLineItem']);
+Route::post('/get-gl-graph', [GlcodeController::class, 'getGlcodeData']);
+
+
+
 

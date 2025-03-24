@@ -191,4 +191,21 @@ trait PurchasingTrait
         return $category;
 
     }
+    function getCategoryCode($category) {
+        if($category == 'Chicken'){
+            return CHICKEN_CODE;
+        } else if($category == 'Eggs'){
+            return EGGS_CODE;
+        } else if($category == 'Fish & Seafood'){
+            return FISH_AND_SEEFOOD_CODE;
+        } else if($category == 'Ground Beef'){
+            return BEEF_CODE;
+        } else if($category == 'Milk & Yogurt'){
+            return DAIRY_PRODUCT_CODE;
+        } else if($category == 'Pork'){
+            return PORK_CODE;
+        } else if($category == 'Turkey'){
+            return TURKEY_CODE;
+        }
+    }
 }
