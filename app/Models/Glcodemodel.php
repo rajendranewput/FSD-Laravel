@@ -34,8 +34,6 @@ class Glcodemodel extends Model
             })
             ->groupBy('gl_account')
             ->get();
-
-
         $final_data = [];
 
         // Map results to category names
@@ -66,6 +64,24 @@ class Glcodemodel extends Model
         $final_data['incorrectly_coded_f2f'] = isset($incorrectly_coded->amount) ? (float) $incorrectly_coded->amount : 0;
 
         return $final_data;
-
+    }
+    static function getBargraphPopup($costCenter, $year, $date, $fytd, $code){
+        $query = DB::table('ledger')
+        ->selectRaw('ROUND(SUM(amount), 2) as amount, actual_name')
+        ->where('f2f', 1)
+        ->when($code == 'incorrectly_code', function ($q) {
+            $q->whereNotIn('gl_account', ['411028', '411029', '411031', '411032', '411136', '411138', '411139', '411140', '411141']);
+        }, function ($q) use ($code) {
+            $q->where('gl_account', $code);
+        })
+        ->whereIn('unit', $costCenter)
+        ->when($fytd, function ($q) use ($year) {
+            $q->where('fiscal_year', $year);
+        }, function ($q) use ($date) {
+            $q->whereIn('fiscal_month', $date);
+        })
+        ->groupBy('actual_name')
+        ->get();
+        return $query;
     }
 }

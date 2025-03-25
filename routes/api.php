@@ -63,6 +63,9 @@ Route::get('/latest-date', [FiscalPeriodController::class, 'getLatestPeriod']);
 Route::post('/cor-total-popup', [PurchasingPopup::class, 'getPopup']);
 Route::post('/get-line-item-popup', [PurchasingPopup::class, 'getLineItem']);
 Route::post('/get-gl-graph', [GlcodeController::class, 'getGlcodeData']);
+Route::post('/get-gl-graph-popup', [GlcodeController::class, 'getGlcodePopup']);
+
+
 
 
 
