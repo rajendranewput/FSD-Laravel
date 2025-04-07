@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\widgetRequest;
+use App\Traits\DateHandlerTrait;
 use App\Models\FiscalPeriod;
 use Illuminate\Support\Facades\Redis;
 
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Redis;
 class FiscalPeriodController extends Controller
 {
     //
+    use DateHandlerTrait;
     public function getFiscalYear(){
         try{
             $data = FiscalPeriod::getyears();
@@ -48,8 +50,8 @@ class FiscalPeriodController extends Controller
             } else {
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
-            
-            $checkBackSoon = FiscalPeriod::getCheckBackSoon($costCenter, $request->year, $request->end_date);
+            $date = $this->handleDates($request->end_date, $request->campus_flag);
+            $checkBackSoon = FiscalPeriod::getCheckBackSoon($costCenter, $request->year, $date);
             if (!$checkBackSoon) { // If no record is found
                 $checkBackSoonPop = true;
             } else {
@@ -60,7 +62,7 @@ class FiscalPeriodController extends Controller
 
             if($checkBackSoonPop == false){
                 if($request->type == 'campus' || $request->type == 'cafe'){
-                    $missingCustomer = FiscalPeriod::getMissingCustomer($costCenter, $request->year, $request->end_date, $request->campus_flag);
+                    $missingCustomer = FiscalPeriod::getMissingCustomer($costCenter, $request->year, $date, $request->campus_flag);
                 }
             }
             
