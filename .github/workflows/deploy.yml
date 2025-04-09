@@ -1,9 +1,6 @@
 name: Deploy Laravel Docker
 
-on:
-  push:
-    branches:
-      - main
+
 
 jobs:
   deploy:
