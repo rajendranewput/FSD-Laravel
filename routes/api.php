@@ -26,6 +26,7 @@ use App\Http\Controllers\AnimalProteinsPerMealController;
 use App\Http\Controllers\FsdHierarchyController;
 use App\Http\controllers\popup\PurchasingPopup;
 use App\Http\Controllers\GlcodeController;
+use App\Http\Controllers\popup\FarmToForkPopup;
 
 
 Route::get('/users', [UserController::class, 'index']);
@@ -64,7 +65,7 @@ Route::post('/cor-total-popup', [PurchasingPopup::class, 'getPopup']);
 Route::post('/get-cor-line-item-popup', [PurchasingPopup::class, 'getLineItem']);
 Route::post('/get-gl-graph', [GlcodeController::class, 'getGlcodeData']);
 Route::post('/get-gl-graph-popup', [GlcodeController::class, 'getGlcodePopup']);
-
+Route::post('/farm-to-fork-popup', [FarmToForkPopup::class, 'index']);
 
 
 
