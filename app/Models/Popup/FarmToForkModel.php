@@ -183,7 +183,7 @@ class FarmToForkModel extends Model
             if ($campus_flag == 11) {
                 $query->whereIn('gc.processing_year', $ytd);
             } else {
-                $query->whereIn('gc.processing_date', $ytd);
+                $query->whereIn('gc.end_date', $ytd);
             }
     
             return $query
@@ -237,7 +237,7 @@ class FarmToForkModel extends Model
     
             return $query
             ->groupBy('gc.unit_id',
-                 'name', 'account_id', 'processing_month_date')
+                 'name', 'account_id', 'end_date')
                 ->orderBy('c.account_id', 'ASC')
                 ->get();
         }
