@@ -66,6 +66,8 @@ Route::post('/get-cor-line-item-popup', [PurchasingPopup::class, 'getLineItem'])
 Route::post('/get-gl-graph', [GlcodeController::class, 'getGlcodeData']);
 Route::post('/get-gl-graph-popup', [GlcodeController::class, 'getGlcodePopup']);
 Route::post('/farm-to-fork-popup', [FarmToForkPopup::class, 'index']);
+Route::post('/radis-clear', [FarmToForkPopup::class, 'radisClear']);
+
 
 
 
