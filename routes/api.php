@@ -28,6 +28,7 @@ use App\Http\controllers\popup\PurchasingPopup;
 use App\Http\Controllers\GlcodeController;
 use App\Http\Controllers\popup\FarmToForkPopup;
 use App\Http\Controllers\popup\CfsPopupController;
+use App\Http\Controllers\popup\LeakagePopupController;
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
@@ -68,6 +69,8 @@ Route::post('/get-gl-graph-popup', [GlcodeController::class, 'getGlcodePopup']);
 Route::post('/farm-to-fork-popup', [FarmToForkPopup::class, 'index']);
 Route::post('/radis-clear', [FarmToForkPopup::class, 'radisClear']);
 Route::post('/cfs-popup', [CfsPopupController::class, 'index']);
+Route::post('/leakage-popup', [LeakagePopupController::class, 'index']);
+
 
 
 
