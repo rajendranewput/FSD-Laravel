@@ -10,7 +10,7 @@ class FarmToForkModel extends Model
     //
     static function getFarmToForkPop($cost_centers, $exp, $end_date, $campus_flag, $type, $team)
     {
-        if ($type === 'rvp') {
+        if ($type == 'rvp') {
             $query = DB::table('gl_codes as gc')
                 ->select(
                     'gc.unit_id',
@@ -74,6 +74,7 @@ class FarmToForkModel extends Model
                 ->get();
     
         } else {
+            
             if (!empty($team)) {
                 $cost_centers = DB::table('wn_costcenter as w')
                     ->join('cafes as c', 'c.cost_center', '=', 'w.team_name')
@@ -86,7 +87,7 @@ class FarmToForkModel extends Model
                     })
                     ->where('w.sector_name', 'A00000')
                     ->where('display_foodstandard', 1)
-                    ->groupBy('c.cost_center')
+                    ->groupBy('c.cost_center', 'w.team_name')
                     ->pluck('w.team_name');
             }
     
@@ -99,7 +100,7 @@ class FarmToForkModel extends Model
                     DB::raw("CONCAT(gc.processing_date, '-', a.account_id) as processing_month_date"),
                     DB::raw('SUM(gc.amount) as amount')
                 )
-                ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center) as c'), 'c.cost_center', '=', 'gc.unit_id')
+                ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center, account_id) as c'), 'c.cost_center', '=', 'gc.unit_id')
                 ->join('accounts as a', 'a.account_id', '=', 'c.account_id')
                 ->whereIn('gc.exp_1', $exp)
                 ->whereIn('gc.unit_id', $cost_centers);
@@ -112,15 +113,14 @@ class FarmToForkModel extends Model
     
             return $query
             ->groupBy('gc.unit_id',
-                 'name', 'account_id', 'processing_month_date')
+                 'name', 'account_id', 'gc.processing_date', 'processing_month_date')
                 ->orderBy('c.account_id', 'ASC')
                 ->get();
         }
     }
     static function getFarmToForkPopYTD($cost_centers, $exp, $end_date, $campus_flag, $ytd, $type, $team){
-        if ($type === 'rvp') {
+        if ($type == 'rvp') {
             DB::enableQueryLog();
-
             $query = DB::table('gl_codes as gc')
                 ->select(
                     'gc.unit_id',
@@ -158,7 +158,7 @@ class FarmToForkModel extends Model
                 ->get();
                 //dd(DB::getQueryLog());
 
-        } elseif ($type === 'sector') {
+        } elseif ($type == 'sector') {
             $query = DB::table('gl_codes as gc')
                 ->select(
                     'gc.unit_id',
@@ -194,6 +194,7 @@ class FarmToForkModel extends Model
                 ->get();
     
         } else {
+           
             if (!empty($team)) {
                 $cost_centers = DB::table('wn_costcenter as w')
                     ->join('cafes as c', 'c.cost_center', '=', 'w.team_name')
@@ -206,7 +207,7 @@ class FarmToForkModel extends Model
                     })
                     ->where('w.sector_name', 'A00000')
                     ->where('display_foodstandard', 1)
-                    ->groupBy('c.cost_center')
+                    ->groupBy('c.cost_center', 'w.team_name')
                     ->pluck('w.team_name');
             }
     
@@ -216,15 +217,15 @@ class FarmToForkModel extends Model
                     'a.name',
                     'a.account_id',
                     'gc.processing_date',
-                    //DB::raw("CONCAT(gc.processing_date, '-', a.account_id) as processing_month_date"),
+                    DB::raw("CONCAT(gc.processing_date, '-', a.account_id) as processing_month_date"),
                     DB::raw('SUM(gc.amount) as amount')
                 )
-                ->when(
-                    in_array($campus_flag, [7, 9, 11]),
-                    fn($q) => $q->selectRaw("CONCAT(gc.processing_year, '-', a.team_name) AS processing_month_date"),
-                    fn($q) => $q->selectRaw("CONCAT(gc.end_date,       '-', a.team_name) AS processing_month_date")
-                )
-                ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center) as c'), 'c.cost_center', '=', 'gc.unit_id')
+                // ->when(
+                //     in_array($campus_flag, [7, 9, 11]),
+                //     fn($q) => $q->selectRaw("CONCAT(gc.processing_year, '-', a.team_name) AS processing_month_date"),
+                //     fn($q) => $q->selectRaw("CONCAT(gc.end_date,       '-', a.team_name) AS processing_month_date")
+                // )
+                ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center, account_id) as c'), 'c.cost_center', '=', 'gc.unit_id')
                 ->join('accounts as a', 'a.account_id', '=', 'c.account_id')
                 ->whereIn('gc.exp_1', $exp)
                 ->whereIn('gc.unit_id', $cost_centers);
@@ -237,7 +238,7 @@ class FarmToForkModel extends Model
     
             return $query
             ->groupBy('gc.unit_id',
-                 'name', 'account_id', 'end_date')
+                 'name', 'account_id', 'end_date', 'processing_date', 'processing_month_date')
                 ->orderBy('c.account_id', 'ASC')
                 ->get();
         }

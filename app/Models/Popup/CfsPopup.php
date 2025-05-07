@@ -59,8 +59,13 @@ class CfsPopup extends Model
                 ->join('wn_costcenter as c', 'c.team_name', '=', 'p.financial_code')
                 ->join('wn_district as a', 'a.team_name', '=', 'c.district_name')
                 ->where('c.sector_name', 'A00000')
-                ->when($team !== 'A00000' && $team !== '', fn($q) => $q->where('c.region_name', $team))
-                ->groupBy('a.team_name')
+                //->when($teamName !== 'A00000' && $teamName !== '', fn($q) => $q->where('c.region_name', $teamName))
+                ->groupBy(
+                'p.financial_code',
+                'c.sector_name',
+                'c.district_name',
+                'a.team_description', 'a.team_name',
+                )
                 ->get();
     
             foreach ($query as $row) {
@@ -106,16 +111,16 @@ class CfsPopup extends Model
         }
     
         // Default: cafe-level
-        if (!empty($team)) {
+        if (!empty($teamName)) {
             $costCenters = DB::table('wn_costcenter as w')
                 ->select('w.team_name')
                 ->join('cafes as c', 'c.cost_center', '=', 'w.team_name')
                 ->where('w.sector_name', 'A00000')
                 ->where('c.display_foodstandard', 1)
-                ->when($team !== 'A00000', fn($q) => 
-                    strlen($team) > 5
-                        ? $q->where('w.region_name', $team)
-                        : $q->where('w.district_name', $team)
+                ->when($teamName !== 'A00000', fn($q) => 
+                    strlen($teamName) > 5
+                        ? $q->where('w.region_name', $teamName)
+                        : $q->where('w.district_name', $teamName)
                 )
                 ->groupBy('w.team_name')
                 ->pluck('w.team_name')
@@ -131,9 +136,9 @@ class CfsPopup extends Model
                 fn($q) => $q->whereIn('p.processing_month_date', $dates)
             )
             ->whereIn('p.financial_code', $costCenters)
-            ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center) as c'), 'c.cost_center', '=', 'p.financial_code')
+            ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center, account_id) as c'), 'c.cost_center', '=', 'p.financial_code')
             ->join('accounts as a', 'a.account_id', '=', 'c.account_id')
-            ->groupBy('c.account_id')
+            ->groupBy('p.financial_code','a.account_id', 'a.name')
             ->get();
     
         foreach ($rows as $row) {

@@ -38,6 +38,7 @@ class FarmToForkPopup extends Controller
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
             $firstItem = FarmToForkModel::getFarmToForkPop($costCenter, config('constants.F2F_EXP_ARRAY_ONE'), $date, $campusFlag, $type, $teamName);
+            
             $secondItem = FarmToForkModel::getFarmToForkPop($costCenter, config('constants.F2F_EXP_ARRAY_TWO'), $date, $campusFlag, $type, $teamName);
             $f2f = [];
             if (!empty($firstItem) && !empty($secondItem)) {
@@ -54,6 +55,7 @@ class FarmToForkPopup extends Controller
                     }
                 }
             }
+            
             if($campusFlag == 7 || $campusFlag == 9 || $campusFlag == 11){
                 $fytdPeriods = $date;
             } else {
@@ -79,7 +81,7 @@ class FarmToForkPopup extends Controller
                     }
                 }
             }
-           
+          
             $final_data = [];
             $first = collect($firstItemYtdArray)->keyBy('account_id');
             foreach($first as $fkey => $first_val) {
