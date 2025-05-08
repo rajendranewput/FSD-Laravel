@@ -7,7 +7,7 @@ use DateTime;
 trait DateHandlerTrait
 {
 
-    public function handleDates($date, $campus_roll_up)
+    public function handleDates($date, $campus_roll_up, $actualDate = false)
     {
         if (strpos($date, ',') !== false) {
             $date = explode(',', $date);
@@ -23,16 +23,30 @@ trait DateHandlerTrait
         ])) {
             $end_date = $date;
         } else {
-            $end_date = [];
-            if (is_array($date)) {
-                foreach ($date as $d_val) {
-                    $date = new DateTime($d_val);
-                    $end_date[] = $date->format('Y-m-01');
+            if($actualDate){
+                $end_date = [];
+                if (is_array($date)) {
+                    foreach ($date as $d_val) {
+                        $date = new DateTime($d_val);
+                        $end_date[] = $date->format('Y-m-d');
+                    }
+                } else {
+                    $date = new DateTime($date);
+                    $end_date[] = $date->format('Y-m-d');
                 }
             } else {
-                $date = new DateTime($date);
-                $end_date[] = $date->format('Y-m-01');
+                $end_date = [];
+                if (is_array($date)) {
+                    foreach ($date as $d_val) {
+                        $date = new DateTime($d_val);
+                        $end_date[] = $date->format('Y-m-01');
+                    }
+                } else {
+                    $date = new DateTime($date);
+                    $end_date[] = $date->format('Y-m-01');
+                }
             }
+            
         }
 
         return $end_date;
