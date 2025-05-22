@@ -64,7 +64,7 @@ class PurchasingPopup extends Controller
         if(!empty($category)){
             $lineItemData = PurchasesPopOut::getLineItem($date, $year, $campusFlag, $type, $costCenter, $categoryCode, $page, $perPage);
         } else {
-            $lineItemData = PurchasesPopOut::getTotalLineItem($date, $year, $campusFlag, $type, $costCenter);
+            $lineItemData = PurchasesPopOut::getTotalLineItem($date, $year, $campusFlag, $type, $costCenter, $page, $perPage);
         }
         return response()->json([
             'status' => 'success',

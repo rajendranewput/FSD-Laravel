@@ -22,7 +22,7 @@ class PurchasesPopOut extends Model
             ->join('wn_region as wr', 'wr.team_name', '=', 'c.region_name');
             if(!$campusFlag == 11){
                 $data->whereIn('p.end_date', $endDate);
-            }   
+            }
             $data->groupBy('wr.team_name', 'wr.team_description');
             $result = $data->get();
         } else if($type == 'dm'){
@@ -192,7 +192,7 @@ class PurchasesPopOut extends Model
         ->paginate($perPage, ['*'], 'page', $page); // Pagination
         return $data;
     }
-    static function getTotalLineItem($endDate, $year, $campusFlag, $type, $costCenter){
+    static function getTotalLineItem($endDate, $year, $campusFlag, $type, $costCenter, $page, $perPage){
         $corCategories = [BEEF_CODE, CHICKEN_CODE, TURKEY_CODE, PORK_CODE, EGGS_CODE, DAIRY_PRODUCT_CODE, FISH_AND_SEEFOOD_CODE];
         $data = DB::table('purchases')
             ->selectRaw('SUM(spend) as spend, mfrItem_code, mfrItem_description, manufacturer_name, mfrItem_brand_name, mfrItem_min, distributor_name')
@@ -207,7 +207,7 @@ class PurchasesPopOut extends Model
             
             ->groupBy('mfrItem_code', 'mfrItem_description', 'manufacturer_name', 'mfrItem_brand_name', 'mfrItem_min', 'distributor_name')
             ->orderByDesc('spend')
-            ->get();
+            ->paginate($perPage, ['*'], 'page', $page);
 
         return $data;
     }

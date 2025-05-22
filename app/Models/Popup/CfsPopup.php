@@ -151,4 +151,35 @@ class CfsPopup extends Model
     
         return $finalData;
     }
+    
+    static function getNonComplaintCfs($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage){
+      
+        $query = DB::table('purchases')
+            ->select([
+                'mfrItem_code',
+                'mfrItem_description',
+                'manufacturer_name',
+                'mfrItem_brand_name',
+                'mfrItem_min',
+                'distributor_name',
+                'mfrItem_parent_category_name',
+                DB::raw('SUM(spend) as spend')
+            ])
+            ->where('spend', '>', 0)
+            ->where('cfs', 2)
+            ->whereIn('financial_code', $costCenter)->when(in_array($campusFlag, [CAMPUS_FLAG, ACCOUNT_FLAG, DM_FLAG, RVP_FLAG, COMPANY_FLAG]), function ($query) use ($date) {
+                return $query->whereIn('processing_month_date', $date);
+            }, function ($query) use ($year) {
+                return $query->where('processing_year', $year);
+            })
+            ->groupBy('mfrItem_code', 'mfrItem_description',
+            'manufacturer_name',
+            'mfrItem_brand_name',
+            'mfrItem_min',
+            'distributor_name',
+            'mfrItem_parent_category_name')
+            ->orderByDesc('spend')
+            ->paginate($perPage, ['*'], 'page', $page); 
+        return $query;
+    }
 }
