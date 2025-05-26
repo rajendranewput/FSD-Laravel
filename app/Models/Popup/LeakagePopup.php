@@ -9,6 +9,21 @@ use DB;
 class LeakagePopup extends Model
 {
     use HasFactory;
+    protected $table = 'leakages';
+    protected $fillable = [
+        'mfr_prod_desc',
+        'mfr_name',
+        'mfr_brand',
+        'min',
+        'dc_name',
+        'invoice_din',
+        'item_category',
+        'leakage_total_spend',
+        'unit',
+        'end_date',
+        'processing_year',
+        'is_deleted',
+    ];
     static function getAccountLeakage($costCenters, $date, $campusFlag, $type, $teamName)
     {
         // $costCenters = explode(',', $costCenter);
@@ -125,5 +140,38 @@ class LeakagePopup extends Model
         }
     
         return $finalData;
+    }
+
+    static function getNonComplaintData($costCenter, $date, $campusFlag, $type, $teamName, $page, $perPage){
+        $query = self::select([
+            'id',
+            'mfr_prod_desc',
+            'mfr_name',
+            'mfr_brand',
+            'min',
+            'dc_name',
+            'invoice_din',
+            'item_category',
+            DB::raw('SUM(leakage_total_spend) as leakage_total_spend')
+        ])
+        ->whereIn('unit', $costCenter);
+        if (in_array($campusFlag, [CAMPUS_FLAG, ACCOUNT_FLAG, DM_FLAG, RVP_FLAG, COMPANY_FLAG])) {
+            $query->whereIn('end_date', $date);
+        } else {
+            $query->where('processing_year', $year);
+        }
+        $result = $query->groupBy([
+            'id',
+            'mfr_prod_desc',
+            'mfr_name',
+            'mfr_brand',
+            'min',
+            'dc_name',
+            'invoice_din',
+            'item_category'
+        ])
+        ->orderBy('leakage_total_spend', 'DESC')
+        ->paginate($perPage, ['*'], 'page', $page);
+        return $result;
     }
 }

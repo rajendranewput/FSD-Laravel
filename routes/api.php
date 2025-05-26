@@ -71,6 +71,8 @@ Route::post('/radis-clear', [FarmToForkPopup::class, 'radisClear']);
 Route::post('/cfs-popup', [CfsPopupController::class, 'index']);
 Route::post('/leakage-popup', [LeakagePopupController::class, 'index']);
 Route::post('/cfs-noncompliant-popup', [CfsPopupController::class, 'cfsNonCompliantPopup']);
+Route::get('/leakage-noncompliant-popup', [LeakagePopupController::class, 'leakageNonCompliantPopup']);
+
 
 
 

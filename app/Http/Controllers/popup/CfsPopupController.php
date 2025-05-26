@@ -44,8 +44,7 @@ class CfsPopupController extends Controller
         $perPage = $request->input('per_page', 10);
         $date = $this->handleDates($request->end_date, $request->campus_flag);
         $teamName = $request->team_name;
-        // $record = json_decode(Redis::get($type.'_cfs_'.$date[0]), true);
-        // if(empty($record)){
+        
             if($request->type == 'campus'){
                 $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
             } else {

@@ -34,4 +34,25 @@ class LeakagePopupController extends Controller
             ], 200);
       //  }
     }
+
+    public function leakageNonCompliantPopup(Request $request)
+    {
+        $year = $request->year;
+        $campusFlag = $request->campus_flag;
+        $type = $request->type;
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 10);
+        $date = $this->handleDates($request->end_date, $request->campus_flag, true);
+        $teamName = $request->team_name;
+        if($request->type == 'campus'){
+            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
+        } else {
+            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
+        }
+        $leakage = LeakagePopup::getNonComplaintData($costCenter, $date, $campusFlag, $type, $teamName, $page, $perPage);
+        return response()->json([
+            'status' => 'success',
+            'data' => $leakage,
+        ], 200);
+    }
 }
