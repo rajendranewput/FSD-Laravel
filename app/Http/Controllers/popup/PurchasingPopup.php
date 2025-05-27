@@ -71,4 +71,27 @@ class PurchasingPopup extends Controller
             'data' => $lineItemData,
         ], 200);
     }
+
+    public function getAccountCORItem(Request $request){
+        $year = $request->year;
+        $campusFlag = $request->campus_flag;
+        $type = $request->type;
+        $category = $request->category;
+        $mfrItem_code = $request->mfr_item_code;
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 10);
+        $date = $this->handleDates($request->end_date, $request->campus_flag);
+        if($request->type == 'campus'){
+            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
+        } else {
+            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
+        }
+            $lineItemData = PurchasesPopOut::getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItem_code, $page, $perPage);
+      
+        return response()->json([
+            'status' => 'success',
+            'data' => $lineItemData,
+        ], 200);
+    }
+
 }

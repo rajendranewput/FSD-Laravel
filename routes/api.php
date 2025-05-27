@@ -29,6 +29,12 @@ use App\Http\Controllers\GlcodeController;
 use App\Http\Controllers\popup\FarmToForkPopup;
 use App\Http\Controllers\popup\CfsPopupController;
 use App\Http\Controllers\popup\LeakagePopupController;
+use App\Http\Middleware\JwtMiddleware;
+
+Route::middleware([JwtMiddleware::class])->get('/protected', function (Request $request) {
+    $user = $request->get('jwt_user'); // access JWT data
+    return response()->json(['message' => 'Authenticated', 'user' => $user]);
+});
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
@@ -72,8 +78,7 @@ Route::post('/cfs-popup', [CfsPopupController::class, 'index']);
 Route::post('/leakage-popup', [LeakagePopupController::class, 'index']);
 Route::post('/cfs-noncompliant-popup', [CfsPopupController::class, 'cfsNonCompliantPopup']);
 Route::get('/leakage-noncompliant-popup', [LeakagePopupController::class, 'leakageNonCompliantPopup']);
-
-
+Route::get('/get-account-cor-item', [PurchasingPopup::class, 'getAccountCORItem']);
 
 
 

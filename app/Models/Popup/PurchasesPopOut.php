@@ -211,5 +211,53 @@ class PurchasesPopOut extends Model
 
         return $data;
     }
-    
+    static function getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItemCode, $page, $perPage){
+        $COR_POPUP_CATEGORY = array('MCC-10069', 'MCC-10048', 'MCC-10053', 'MCC-10066', 'MCC-10025', 'MCC-10067', 'MCC-10021');
+        $query = DB::table('purchases as p')
+            ->select([
+                'p.mfrItem_code',
+                'p.mfrItem_description',
+                'p.manufacturer_name',
+                'p.mfrItem_brand_name',
+                'p.mfrItem_min',
+                'p.distributor_name',
+                'a.account_id',
+                'a.name',
+                'p.financial_code',
+                DB::raw('SUM(spend) as spend')
+            ])
+            ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center, account_id) as c'), 'c.cost_center', '=', 'p.financial_code')
+            ->join('accounts as a', 'a.account_id', '=', 'c.account_id')
+            ->whereIn('p.financial_code', $costCenter)
+            ->whereIn('p.mfrItem_parent_category_code', $COR_POPUP_CATEGORY)
+            ->where('p.cor', 2)
+            ->where('p.mfrItem_code', $mfrItemCode);
+
+        if (in_array($campusFlag, [CAMPUS_FLAG, ACCOUNT_FLAG, DM_FLAG, RVP_FLAG, COMPANY_FLAG])) {
+            $query->whereIn('p.processing_month_date', $date);
+        } else {
+            $query->where('p.processing_year', $year);
+        }
+
+        $result = $query
+            ->groupBy('p.mfrItem_code',
+            'p.mfrItem_description',
+            'p.manufacturer_name',
+            'p.mfrItem_brand_name',
+            'p.mfrItem_min',
+            'p.distributor_name',
+            'a.account_id',
+            'a.name',
+            'p.financial_code')
+            ->orderByDesc('spend')
+            ->get();
+
+        return $result->map(function ($row) {
+            return [
+                'account_id'   => $row->account_id,
+                'account_name' => $row->name,
+                'spend'        => $row->spend,
+            ];
+        })->toArray();
+    }
 }
