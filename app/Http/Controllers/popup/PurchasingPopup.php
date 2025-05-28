@@ -86,7 +86,7 @@ class PurchasingPopup extends Controller
         } else {
             $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
         }
-            $lineItemData = PurchasesPopOut::getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItem_code, $page, $perPage);
+            $lineItemData = PurchasesPopOut::getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItem_code, $category, $page, $perPage);
       
         return response()->json([
             'status' => 'success',

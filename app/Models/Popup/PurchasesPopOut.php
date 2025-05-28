@@ -211,7 +211,28 @@ class PurchasesPopOut extends Model
 
         return $data;
     }
-    static function getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItemCode, $page, $perPage){
+    static function getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItemCode, $category, $page, $perPage){
+        if($category == 'Ground Beef'){
+            $category = 'MCC-10069';
+        }
+        if($category == 'Chicken'){
+            $category = 'MCC-10048';
+        }
+        if($category == 'Turkey'){
+            $category = 'MCC-10053';
+        }
+        if($category == 'Pork'){
+            $category = 'MCC-10066';
+        }
+        if($category == 'Eggs'){
+            $category = 'MCC-10025';
+        }
+        if($category == 'Dairy'){
+            $category = 'MCC-10067';
+        }
+        if($category == 'Fish & Seafood'){
+            $category = 'MCC-10021';
+        }
         $COR_POPUP_CATEGORY = array('MCC-10069', 'MCC-10048', 'MCC-10053', 'MCC-10066', 'MCC-10025', 'MCC-10067', 'MCC-10021');
         $query = DB::table('purchases as p')
             ->select([
@@ -228,9 +249,14 @@ class PurchasesPopOut extends Model
             ])
             ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center, account_id) as c'), 'c.cost_center', '=', 'p.financial_code')
             ->join('accounts as a', 'a.account_id', '=', 'c.account_id')
-            ->whereIn('p.financial_code', $costCenter)
-            ->whereIn('p.mfrItem_parent_category_code', $COR_POPUP_CATEGORY)
-            ->where('p.cor', 2)
+            ->whereIn('p.financial_code', $costCenter);
+            if(!empty($category)){
+                $query->whereIn('p.mfrItem_parent_category_code', $category);
+            } else {
+                $query->whereIn('p.mfrItem_parent_category_code', $COR_POPUP_CATEGORY);
+            
+            }
+            $query->where('p.cor', 2)
             ->where('p.mfrItem_code', $mfrItemCode);
 
         if (in_array($campusFlag, [CAMPUS_FLAG, ACCOUNT_FLAG, DM_FLAG, RVP_FLAG, COMPANY_FLAG])) {
