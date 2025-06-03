@@ -114,8 +114,13 @@ class FarmToForkPopup extends Controller
 
     public static function getFytdPeriods(string|array $endDate): array
     {
-        $dates = is_array($endDate) ? $endDate : [ $endDate ];
+        if(is_array($endDate)){
+            $dates = $endDate;
+        } else {
+            $dates = explode(',', $endDate);
+        }
         $formatted = array_map(fn($d) => Carbon::parse($d)->format('n/d/Y'), $dates);
+       
         $fiscalYear = DB::table('dashboard_fiscal_periods')
             ->whereIn('end_date', $formatted)
             ->value('fiscal_year');
