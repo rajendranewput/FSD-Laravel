@@ -30,56 +30,53 @@ use App\Http\Controllers\popup\FarmToForkPopup;
 use App\Http\Controllers\popup\CfsPopupController;
 use App\Http\Controllers\popup\LeakagePopupController;
 use App\Http\Middleware\JwtMiddleware;
-
-Route::middleware([JwtMiddleware::class])->get('/protected', function (Request $request) {
-    $user = $request->get('jwt_user'); // access JWT data
-    return response()->json(['message' => 'Authenticated', 'user' => $user]);
-});
-
-Route::get('/users', [UserController::class, 'index']);
-Route::get('/users/{id}', [UserController::class, 'show']);
-Route::post('/users', [UserController::class, 'store']);
-Route::put('/users/{id}', [UserController::class, 'update']);
-Route::delete('/users/{id}', [UserController::class, 'destroy']);
-Route::post('/farm-fork-spend-data', [FarmtoforkController::class, 'farmForkSpendData']);
-Route::post('/farm-to-fork-gl-code-graph', [FarmtoforkController::class, 'farmToForkGLCodeData']);
-Route::post('/cooked-leakage-data', [CookedLeakageController::class, 'cookedLeakageData']);
-Route::post('/cor-data', [CorController::class, 'CorData']);
-Route::post('/set-costcenter', [LoginController::class, 'setCostCentersToRedis']);
-Route::get('/get-fiscal-year', [FiscalPeriodController::class, 'getFiscalYear']);
-Route::post('/get-fiscal-period', [FiscalPeriodController::class, 'getFiscalPeriod']);
-//Route::post('/download-flavor-first-report', [FlavorFirstController::class, 'downloadFlavorFirstReport']);
-Route::post('/download-flavor-first-report', [FlavorFirstController::class, 'export']);
-Route::post('/beef-meal', [BeefPerMealController::class, 'beefPerMeal']);
-Route::post('/image-share', [ShareImageController::class, 'shareImage']);
-Route::post('/trimming-transportation', [TrimmingTransportationController::class, 'trimmingTransportation']);
-Route::post('/sap-hierarchy', [SapHierarchyController::class, 'sapHierarchy']);
-Route::get('/download-csv-report', [GoogleAnalyticsController::class, 'downloadCsvReport']);
-Route::post('/decreasing-deforestation', [DecreasingDeforestationController::class, 'decreasingDeforestation']);
-Route::post('/emphasize-plant-proteins', [EmphasizePlantController::class, 'emphasizePlant']);
-Route::post('/wellness-plate', [WellnessPlateController::class, 'wellnessPlate']);
-Route::post('/wbi', [WBIController::class, 'wbiData']);
-Route::post('/whole-food-bar-chart', [WholeFoodChartController::class, 'wholeFood']);
-Route::post('/trend-purchasing', [TrendGraphController::class, 'purcahasingTrendGraph']);
-Route::post('/ticks', [TicksController::class, 'ticks']);
-Route::post('/animal-proteins-per-meal', [AnimalProteinsPerMealController::class, 'animalProteinsPerMeal']);
-Route::post('/check-for-popups', [FiscalPeriodController::class, 'checkForPopups']);
-Route::post('/sector-drop-down-data', [FsdHierarchyController::class, 'sectorData']);
-Route::post('/sector-hierarchy-data', [FsdHierarchyController::class, 'sectorHierarchyData']);
-Route::post('/account-hierarchy-data', [FsdHierarchyController::class, 'accountHierarchy']);
-Route::get('/latest-date', [FiscalPeriodController::class, 'getLatestPeriod']);
-Route::post('/cor-total-popup', [PurchasingPopup::class, 'getPopup']);
-Route::post('/get-cor-line-item-popup', [PurchasingPopup::class, 'getLineItem']);
-Route::post('/get-gl-graph', [GlcodeController::class, 'getGlcodeData']);
-Route::post('/get-gl-graph-popup', [GlcodeController::class, 'getGlcodePopup']);
-Route::post('/farm-to-fork-popup', [FarmToForkPopup::class, 'index']);
-Route::post('/radis-clear', [FarmToForkPopup::class, 'radisClear']);
-Route::post('/cfs-popup', [CfsPopupController::class, 'index']);
-Route::post('/leakage-popup', [LeakagePopupController::class, 'index']);
-Route::post('/cfs-noncompliant-popup', [CfsPopupController::class, 'cfsNonCompliantPopup']);
-Route::get('/leakage-noncompliant-popup', [LeakagePopupController::class, 'leakageNonCompliantPopup']);
-Route::get('/get-account-cor-item', [PurchasingPopup::class, 'getAccountCORItem']);
+use App\Http\Controllers\AuthController;
 
 
+//Route::middleware([JwtMiddleware::class])->group(function () {
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::get('/farm-fork-spend-data', [FarmtoforkController::class, 'farmForkSpendData']);
+    Route::get('/farm-to-fork-gl-code-graph', [FarmtoforkController::class, 'farmToForkGLCodeData']);
+    Route::get('/cooked-leakage-data', [CookedLeakageController::class, 'cookedLeakageData']);
+    Route::get('/cor-data', [CorController::class, 'CorData']);
+    Route::get('/set-costcenter', [LoginController::class, 'setCostCentersToRedis']);
+    Route::get('/get-fiscal-year', [FiscalPeriodController::class, 'getFiscalYear']);
+    Route::get('/get-fiscal-period', [FiscalPeriodController::class, 'getFiscalPeriod']);
+    //Route::get('/download-flavor-first-report', [FlavorFirstController::class, 'downloadFlavorFirstReport']);
+    Route::get('/download-flavor-first-report', [FlavorFirstController::class, 'export']);
+    Route::get('/beef-meal', [BeefPerMealController::class, 'beefPerMeal']);
+    Route::get('/image-share', [ShareImageController::class, 'shareImage']);
+    Route::get('/trimming-transportation', [TrimmingTransportationController::class, 'trimmingTransportation']);
+    Route::get('/sap-hierarchy', [SapHierarchyController::class, 'sapHierarchy']);
+    Route::get('/download-csv-report', [GoogleAnalyticsController::class, 'downloadCsvReport']);
+    Route::get('/decreasing-deforestation', [DecreasingDeforestationController::class, 'decreasingDeforestation']);
+    Route::get('/emphasize-plant-proteins', [EmphasizePlantController::class, 'emphasizePlant']);
+    Route::get('/wellness-plate', [WellnessPlateController::class, 'wellnessPlate']);
+    Route::get('/wbi', [WBIController::class, 'wbiData']);
+    Route::get('/whole-food-bar-chart', [WholeFoodChartController::class, 'wholeFood']);
+    Route::get('/trend-purchasing', [TrendGraphController::class, 'purcahasingTrendGraph']);
+    Route::get('/ticks', [TicksController::class, 'ticks']);
+    Route::get('/animal-proteins-per-meal', [AnimalProteinsPerMealController::class, 'animalProteinsPerMeal']);
+    Route::get('/check-for-popups', [FiscalPeriodController::class, 'checkForPopups']);
+    Route::get('/sector-drop-down-data', [FsdHierarchyController::class, 'sectorData']);
+    Route::get('/sector-hierarchy-data', [FsdHierarchyController::class, 'sectorHierarchyData']);
+    Route::get('/account-hierarchy-data', [FsdHierarchyController::class, 'accountHierarchy']);
+    Route::get('/latest-date', [FiscalPeriodController::class, 'getLatestPeriod']);
+    Route::get('/cor-total-popup', [PurchasingPopup::class, 'getPopup']);
+    Route::get('/get-cor-line-item-popup', [PurchasingPopup::class, 'getLineItem']);
+    Route::get('/get-gl-graph', [GlcodeController::class, 'getGlcodeData']);
+    Route::get('/get-gl-graph-popup', [GlcodeController::class, 'getGlcodePopup']);
+    Route::get('/farm-to-fork-popup', [FarmToForkPopup::class, 'index']);
+    Route::get('/radis-clear', [FarmToForkPopup::class, 'radisClear']);
+    Route::get('/cfs-popup', [CfsPopupController::class, 'index']);
+    Route::get('/leakage-popup', [LeakagePopupController::class, 'index']);
+    Route::get('/cfs-noncompliant-popup', [CfsPopupController::class, 'cfsNonCompliantPopup']);
+    Route::get('/leakage-noncompliant-popup', [LeakagePopupController::class, 'leakageNonCompliantPopup']);
+    Route::get('/get-account-cor-item', [PurchasingPopup::class, 'getAccountCORItem']);
+    Route::get('/refresh-token', [AuthController::class, 'refreshToken']);
+
+
+//});
 
 

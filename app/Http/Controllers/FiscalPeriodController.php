@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\widgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Models\FiscalPeriod;
@@ -24,7 +25,7 @@ class FiscalPeriodController extends Controller
         }
 
     }
-    public function getFiscalPeriod(widgetRequest $request){
+    public function getFiscalPeriod(Request $request){
         try{
             if($request->type == 'campus'){
                 $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
