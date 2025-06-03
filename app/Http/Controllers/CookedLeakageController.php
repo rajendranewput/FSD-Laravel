@@ -15,7 +15,9 @@ class CookedLeakageController extends Controller
 
     /*** get cooked and leakage data*/
     public function cookedLeakageData(widgetRequest $request){
+        
         $validated = $request->validated();
+        
         try{
             $year = $request->year;
             $date = $this->handleDates($request->end_date, $request->campus_flag);
@@ -24,7 +26,6 @@ class CookedLeakageController extends Controller
             } else {
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
-            
             $cookedFromScratch = CookedLeakage::cookedFromScratch($date, $costCenter, $request->campus_flag, $year);
             $leakageFromVendors = CookedLeakage::leakageFromVendors($date, $costCenter, $request->campus_flag, $year);
             $cookedColor = $this->getColorThreshold($cookedFromScratch, COOKED_LEAKAGE_SECTION);
