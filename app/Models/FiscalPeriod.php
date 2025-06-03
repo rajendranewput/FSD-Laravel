@@ -93,8 +93,12 @@ class FiscalPeriod extends Model
     static function getCheckBackSoon($cost_center, $year, $date){
         $data = DB::table('dashboard_aggregates_meta')
             ->select('end_date')
-            ->whereRaw('DATE_FORMAT(STR_TO_DATE(end_date, "%m/%d/%Y"), "%Y-%m-01") = ?', [$date])
             ->where('status', 'CORDATA')
+            ->where(function ($query) use ($date) {
+                foreach ($date as $d) {
+                    $query->orWhereRaw('DATE_FORMAT(STR_TO_DATE(end_date, "%m/%d/%Y"), "%Y-%m-01") = ?', [$d]);
+                }
+            })
             ->first();
         return $data;
     }

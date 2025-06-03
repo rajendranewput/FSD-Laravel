@@ -44,13 +44,14 @@ class FiscalPeriodController extends Controller
     public function checkForPopups(widgetRequest $request){
         $validated = $request->validated();
 
-        try{
+        //try{
             if($request->type == 'campus'){
                 $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
             } else {
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
             $date = $this->handleDates($request->end_date, $request->campus_flag);
+           
             $checkBackSoon = FiscalPeriod::getCheckBackSoon($costCenter, $request->year, $date);
             if (!$checkBackSoon) { // If no record is found
                 $checkBackSoonPop = true;
@@ -74,9 +75,9 @@ class FiscalPeriodController extends Controller
                 'status' => 'success',
                 'data' => $dataArray,
             ], 200);
-        } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        // } catch(\Exception $e) {
+        //     return response()->json(['error' => $e->getMessage()], 500);
+        // }
 
     }
 
