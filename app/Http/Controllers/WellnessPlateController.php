@@ -18,16 +18,17 @@ class WellnessPlateController extends Controller
         try{
             $year = $request->year;
             $fytd = $request->fytd;
-            if (strpos($request->end_date, ',') !== false) {
-                $request->end_date = explode(',', $request->end_date);
+            $dates = $request->end_date;
+            if (strpos($dates, ',') !== false) {
+                $dates = explode(',', $dates);
             }
-            if(is_array($request->end_date)){
-                foreach($request->end_date as $dates){
-                    $d = new DateTime($dates);
-                    $end_date[] = $date->format('n/d/Y');
+            if(is_array($dates)){
+                foreach($dates as $day){
+                    $d = new DateTime($day);
+                    $end_date[] = $d->format('n/d/Y');
                 }
             } else {
-                $d = new DateTime($request->end_date);
+                $d = new DateTime($dates);
                 $end_date[] = $d->format('n/d/Y');
             }
             $date = $this->handleDates($request->end_date, $request->campus_flag);
