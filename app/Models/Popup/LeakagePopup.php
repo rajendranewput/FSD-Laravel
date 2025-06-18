@@ -174,4 +174,103 @@ class LeakagePopup extends Model
         ->paginate($perPage, ['*'], 'page', $page);
         return $result;
     }
+
+    static function getLeakageLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage){
+        $query = DB::table('leakages')
+        ->select([
+            'id',
+            'mfr_prod_desc',
+            'mfr_name',
+            'mfr_brand',
+            'min',
+            'dc_name',
+            'invoice_din',
+            DB::raw('SUM(leakage_total_spend) as leakage_total_spend')
+        ])
+        ->whereIn('unit', $costCenter)
+        ->where('is_deleted', 0);
+
+        // Handle date filtering based on campus_flag
+        if (in_array($campusFlag, [CAMPUS_FLAG, ACCOUNT_FLAG, DM_FLAG, RVP_FLAG, COMPANY_FLAG])) {
+            $query->whereIn('end_date', $date);
+        } else {
+            $query->where('processing_year', $year);
+        }
+        $result = $query
+        ->groupBy('min',
+            'id',
+            'mfr_prod_desc',
+            'mfr_name',
+            'mfr_brand',
+            'dc_name',
+            'invoice_din')
+        ->orderByDesc('leakage_total_spend')
+        ->orderByDesc('min')
+        ->paginate($perPage, ['*'], 'page', $page);
+        return $result;
+    }
+    static function getAccountLeakageLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $min, $invoiceDin, $prodDescription){
+        $query = DB::table('leakages as l')
+        ->select([
+            'l.id',
+            'l.mfr_prod_desc',
+            'l.mfr_name',
+            'l.mfr_brand',
+            'l.min',
+            'l.dc_name',
+            'a.account_id',
+            'a.name',
+            'l.unit',
+            DB::raw('SUM(leakage_total_spend) as leakage_total_spend')
+        ])
+        ->whereIn('l.unit', $costCenter)
+        ->where('l.is_deleted', 0);
+
+    // Add dynamic filters
+    if (!empty($min)) {
+        $query->where('l.min', $min);
+    } elseif (!empty($invoiceDin)) {
+        $query->where('l.invoice_din', $invoiceDin);
+    } elseif (!empty($prodDescription)) {
+        $query->where('l.mfr_prod_desc', $prodDescription);
+    }
+
+    // Handle date filtering
+    if (in_array($campusFlag, [CAMPUS_FLAG, ACCOUNT_FLAG, DM_FLAG, RVP_FLAG, COMPANY_FLAG])) {
+        $query->whereIn('l.end_date', $date);
+    } else {
+        $query->where('l.processing_year', $year);
+    }
+
+    // Join cafes subquery + accounts
+    $query->join(
+        DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center, account_id) as c'),
+        'c.cost_center',
+        '=',
+        'l.unit'
+    )
+    ->join('accounts as a', 'a.account_id', '=', 'c.account_id');
+
+    $result = $query
+        ->groupBy('a.account_id','l.id',
+        'l.mfr_prod_desc',
+        'l.mfr_name',
+        'l.mfr_brand',
+        'l.min',
+        'l.dc_name',
+        'a.name',
+        'l.unit')
+        ->orderByDesc('leakage_total_spend')
+        ->get()
+        ->map(function ($item) {
+            return [
+                'account_id' => $item->account_id,
+                'account_name' => $item->name,
+                'spend' => $item->leakage_total_spend,
+            ];
+        })
+        ->toArray();
+
+    return $result;
+    }
 }

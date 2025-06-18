@@ -50,12 +50,55 @@ class CfsPopupController extends Controller
             } else {
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
-           
             $Cfs = CfsPopup::getNonComplaintCfs($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage);
             return response()->json([
                 'status' => 'success',
                 'data' => $Cfs,
             ], 200);
       //  }
+    }
+
+    public function cfsLineItems(Request $request){
+        $year = $request->year;
+        $campusFlag = $request->campus_flag;
+        $type = $request->type;
+        $popupType = $request->popup_type;
+        $date = $this->handleDates($request->end_date, $request->campus_flag);
+        $teamName = $request->team_name;
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 10);
+        if($request->type == 'campus'){
+            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
+        } else {
+            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
+        }
+        $Cfs = CfsPopup::getCfsLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage);
+        return response()->json([
+            'status' => 'success',
+            'data' => $Cfs,
+        ], 200);
+
+    }
+    public function cfsLineItemsDetails(Request $request){
+        $year = $request->year;
+        $campusFlag = $request->campus_flag;
+        $type = $request->type;
+        $popupType = $request->popup_type;
+        $date = $this->handleDates($request->end_date, $request->campus_flag);
+        $teamName = $request->team_name;
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 10);
+        $mfrItemCode = $request->mfr_item_code;
+        if($request->type == 'campus'){
+            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
+        } else {
+            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
+        }
+        $Cfs = CfsPopup::getAccountCfsLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $mfrItemCode, $page, $perPage);
+        return response()->json([
+            'status' => 'success',
+            'data' => $Cfs,
+        ], 200);
+
     }
 }

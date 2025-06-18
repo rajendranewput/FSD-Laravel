@@ -55,4 +55,47 @@ class LeakagePopupController extends Controller
             'data' => $leakage,
         ], 200);
     }
+    public function leakageLineItems(Request $request){
+        $year = $request->year;
+        $campusFlag = $request->campus_flag;
+        $type = $request->type;
+        $popupType = $request->popup_type;
+        $date = $this->handleDates($request->end_date, $request->campus_flag, true);
+        $teamName = $request->team_name;
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 10);
+        if($request->type == 'campus'){
+            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
+        } else {
+            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
+        }
+        $Cfs = LeakagePopup::getLeakageLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage);
+        return response()->json([
+            'status' => 'success',
+            'data' => $Cfs,
+        ], 200);
+
+    }
+    public function leakageLineItemsDetails(Request $request){
+        $year = $request->year;
+        $campusFlag = $request->campus_flag;
+        $type = $request->type;
+        $popupType = $request->popup_type;
+        $date = $this->handleDates($request->end_date, $request->campus_flag, true);
+        $teamName = $request->team_name;
+        $invoiceDin = $request->invoice_din;
+        $prodDescription = $request->prod_description;
+        $min = $request->min;
+        if($request->type == 'campus'){
+            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
+        } else {
+            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
+        }
+        $Cfs = LeakagePopup::getAccountLeakageLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $min, $invoiceDin, $prodDescription);
+        return response()->json([
+            'status' => 'success',
+            'data' => $Cfs,
+        ], 200);
+
+    }
 }

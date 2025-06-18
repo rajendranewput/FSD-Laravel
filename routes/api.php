@@ -75,7 +75,12 @@ use App\Http\Controllers\AuthController;
     Route::get('/leakage-noncompliant-popup', [LeakagePopupController::class, 'leakageNonCompliantPopup']);
     Route::get('/get-account-cor-item', [PurchasingPopup::class, 'getAccountCORItem']);
     Route::get('/refresh-token', [AuthController::class, 'refreshToken']);
+    Route::get('/get-cfs-line-item', [CfsPopupController::class, 'cfsLineItems']);
+    Route::get('/get-cfs-line-item-details', [CfsPopupController::class, 'cfsLineItemsDetails']);
+    Route::get('/get-leakage-line-item', [LeakagePopupController::class, 'leakageLineItems']);
+    Route::get('/get-leakage-line-item-details', [LeakagePopupController::class, 'leakageLineItemsDetails']);
 
+    
 
 //});
 

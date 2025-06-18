@@ -182,4 +182,101 @@ class CfsPopup extends Model
             ->paginate($perPage, ['*'], 'page', $page); 
         return $query;
     }
+    static function getCfsLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage)
+    {
+        DB::enableQueryLog();
+        $query = DB::table('purchases')
+            ->select(
+                'mfrItem_code',
+                'mfrItem_description',
+                'manufacturer_name',
+                'mfrItem_brand_name',
+                'mfrItem_min',
+                'distributor_name',
+                DB::raw('SUM(spend) as spend')
+            )
+            ->whereIn('financial_code', $costCenter)
+            ->where('cfs', 2)
+            ->where('spend', '>', 0);
+    
+        if (!empty($mfrItemCode)) {
+            $query->where('mfrItem_code', $mfrItemCode);
+        }
+        if (in_array($campusFlag, [CAMPUS_FLAG, ACCOUNT_FLAG, DM_FLAG, RVP_FLAG, COMPANY_FLAG])) {
+            $query->whereIn('processing_month_date', $date);
+        } else {
+            $query->where('processing_year', $year);
+        }
+        $result = $query
+            ->groupBy('mfrItem_code',
+            'mfrItem_description',
+            'manufacturer_name',
+            'mfrItem_brand_name',
+            'mfrItem_min',
+            'distributor_name')
+            ->orderByDesc('spend')
+            ->paginate($perPage, ['*'], 'page', $page); 
+        return $result;
+    }
+    static function getAccountCfsLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $mfrItemCode, $page, $perPage){
+        
+        $query = DB::table('purchases as p')
+            ->select([
+                'mfrItem_code',
+                'mfrItem_description',
+                'manufacturer_name',
+                'mfrItem_brand_name',
+                'mfrItem_min',
+                'distributor_name',
+                'a.account_id',
+                'a.name',
+                'p.financial_code',
+                DB::raw('SUM(spend) as spend')
+            ])
+            ->whereIn('financial_code', $costCenter)
+            ->where('cfs', 2)
+            ->where('mfrItem_code', $mfrItemCode);
+
+        // Conditional on campus_flag
+        if (in_array($campusFlag, [CAMPUS_FLAG, ACCOUNT_FLAG, DM_FLAG, RVP_FLAG, COMPANY_FLAG])) {
+            $query->whereIn('processing_month_date', $date);
+        } else {
+            $query->where('processing_year', $year);
+        }
+
+        // Subquery join
+        $query->joinSub(
+            DB::table('cafes')
+                ->select('cost_center', 'account_id')
+                ->groupBy('cost_center', 'account_id'),
+            'c',
+            'c.cost_center',
+            '=',
+            'p.financial_code'
+        );
+
+        $query->join('accounts as a', 'a.account_id', '=', 'c.account_id');
+
+        $result = $query
+            ->groupBy('mfrItem_code',
+            'mfrItem_description',
+            'manufacturer_name',
+            'mfrItem_brand_name',
+            'mfrItem_min',
+            'distributor_name',
+            'a.account_id',
+            'a.name',
+            'p.financial_code')
+            ->orderByDesc('spend')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'account_id'   => $row->account_id,
+                    'account_name' => $row->name,
+                    'spend'        => $row->spend,
+                ];
+            })
+            ->toArray();
+            return $result;
+    }
 }
