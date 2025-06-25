@@ -6,64 +6,84 @@ use Illuminate\Http\Request;
 use App\Models\FSD;
 use DB;
 
+/**
+ * FSD Hierarchy Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class FsdHierarchyController extends Controller
 {
-    //
-    public function sectorData(Request $request){
-        $result = FSD::getSectorDropDownFull();
+    /**
+     * Get FSD Hierarchy Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with FSD hierarchy data
+     * 
+     * @api {get} /sector-drop-down-data Get FSD Hierarchy Data
+     * @apiName FsdHierarchy
+     * @apiGroup FsdHierarchy
+     * @apiSuccess {Object} complex Complex level hierarchy data
+     * @apiSuccess {Object} rvp RVP level hierarchy data
+     * @apiSuccess {Object} dm District manager level hierarchy data
+     * @apiSuccess {Object} account Account level hierarchy data
+     * @apiSuccess {Object} campus Campus level hierarchy data
+     * @apiSuccess {Object} cafe Cafe level hierarchy data
+     */
+    public function sectorData(){
+        $data = FSD::getHierarchyData();
+        // Initialize arrays to avoid undefined variable notices
+        $complex = [];
         $rvp = [];
         $dm = [];
-        $accounts = [];
-        $locations = [];
-        $cafes = [];
+        $account = [];
+        $campus = [];
+        $cafe = [];
 
-        foreach($result as $val){
-            if (!array_key_exists($val->region_name, $rvp)) {
-                $rvp[$val->region_name] = array(
-                    'team_name' => $val->region_name,
-                    'team_description' => $val->region_des,
-                );
-            }
-            if (!array_key_exists($val->district_name, $dm)) {
-                $dm[$val->district_name] = array(
-                    'team_name' => $val->district_name,
-                    'team_description' => $val->district_des,
-                );
-            }
-            if (!array_key_exists($val->account_id, $accounts)) {
-                $accounts[$val->account_id] = array(
-                    'team_name' => $val->account_id,
-                    'team_description' => $val->account_name,
-                );
-            }
-            if (!array_key_exists($val->location_id, $locations)) {
-                $locations[$val->location_id] = array(
-                    'team_name' => $val->location_id,
-                    'team_description' => $val->location_name,
-                );
-            }
-            if (!array_key_exists($val->team_name, $cafes)) {
-                $cafes[$val->team_name] = array(
-                    'team_name' => $val->team_name,
-                    'team_description' => $val->cafe_name,
-                );
-            }
+        // Process data and create associative arrays
+        foreach ($data as $val) {
+            $complex[$val->complex_name] = [
+                'team_name' => $val->complex_name,
+                'description' => $val->complex_description,
+            ];
+            
+            $rvp[$val->region_team_name] = [
+                'team_name' => $val->region_team_name,
+                'description' => $val->region_name,
+            ];
+            
+            $dm[$val->district_team_name] = [
+                'team_name' => $val->district_team_name,
+                'description' => $val->district_name,
+            ];
+            
+            $account[$val->account_id] = [
+                'team_name' => $val->account_id,
+                'description' => $val->account_name,
+            ];
+            
+            $campus[$val->location_id] = [
+                'team_name' => $val->location_id,
+                'description' => $val->location_name,
+            ];
+            
+            $cafe[$val->cost_center] = [
+                'team_name' => $val->cost_center,
+                'description' => $val->cafe_name,
+            ];
         }
 
-
-        $finalData = array(
-            'rvp' => $rvp,
-            'dm' => $dm,
-            'accounts' => $accounts,
-            'campuses' => $locations,
-            'cafes' => $cafes
-        );
-        return response()->json([
-            'status' => 'success',
-            'data' => $finalData,
-        ], 200);
+        // Create the final associative array
+        $fsd = [
+            'complex' => array_values($complex),
+            'rvp' => array_values($rvp),
+            'dm' => array_values($dm),
+            'account' => array_values($account),
+            'campus' => array_values($campus),
+            'cafe' => array_values($cafe),
+        ];
+        return $this->successResponse($fsd, 'FSD hierarchy data retrieved successfully');
     }
-
     public function sectorHierarchyData(Request $request){
         $result = FSD::getDropDown($request->type, $request->team_name, $request->rvp, $request->dm, $request->account, $request->campus);
         $hierarchyMap = [
@@ -78,7 +98,7 @@ class FsdHierarchyController extends Controller
         $validTypes = ['sector', 'rvp', 'dm', 'accounts', 'campuses', 'cafes'];
         
         if (!in_array($type, $validTypes)) {
-            return response()->json(['error' => 'Invalid type'], 400);
+            return $this->badRequestResponse('Invalid type');
         }
         
         // Initialize result arrays dynamically
@@ -125,19 +145,13 @@ class FsdHierarchyController extends Controller
         
         // Return final data
         
-        return response()->json([
-            'status' => 'success',
-            'data' => $finalData,
-        ], 200);
+        return $this->successResponse($finalData, 'success');
     }
 
     public function accountHierarchy(Request $request){
         $accountId = FSD::getAccountIdByLocation($request->location_id);
         $data = FSD::getAccountTree($accountId);
-        return response()->json([
-            'status' => 'success',
-            'data' => $data,
-        ], 200);
+        return $this->successResponse($data, 'success');
     }
 
 }

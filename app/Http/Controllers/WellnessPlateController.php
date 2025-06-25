@@ -9,10 +9,35 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\WellnessPlate;
 use DateTime;
 
+/**
+ * Wellness Plate Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class WellnessPlateController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
+    /**
+     * Get Wellness Plate Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with wellness plate data
+     * 
+     * @throws \Exception When data processing fails
+     * 
+     * @api {get} /wellness-plate Get Wellness Plate Data
+     * @apiName WellnessPlate
+     * @apiGroup WellnessPlate
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} fytd Fiscal year to date flag
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} data Wellness plate nutritional data
+     */
     public function wellnessPlate(Request $request){
         
         try{
@@ -42,12 +67,9 @@ class WellnessPlateController extends Controller
             $wellnessPlate = new WellnessPlate();
             $wellnessPlateData = $wellnessPlate->getWellnessPlateData($date, $costCenter, $request->campus_flag, $year, $fytd);
             
-            return response()->json([
-                'status' => 'success',
-                'data' => $wellnessPlateData,
-            ], 200);
+            return $this->successResponse($wellnessPlateData, 'success');
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
 }

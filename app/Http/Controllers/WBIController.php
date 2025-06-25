@@ -9,10 +9,35 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\WBI;
 use DateTime;
 
+/**
+ * WBI (Wellness, Balance, Innovation) Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class WBIController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
+    /**
+     * Get WBI Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with WBI data
+     * 
+     * @throws \Exception When data processing fails
+     * 
+     * @api {get} /wbi Get WBI Data
+     * @apiName WbiData
+     * @apiGroup WBI
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} fytd Fiscal year to date flag
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} wbi_section_data WBI metrics and analysis data
+     */
     public function wbiData(Request $request){
         
         try{
@@ -42,14 +67,11 @@ class WBIController extends Controller
             $wbi = new WBI();
             $wbiData = $wbi->getWBIData($date, $costCenter, $request->campus_flag, $year, $fytd);
             
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'wbi_section_data' => $wbiData
-                ],
-            ], 200);
+            return $this->successResponse([
+                'wbi_section_data' => $wbiData
+            ], 'success');
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\PurchasingTrait;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class WellnessPlate extends Model
 {

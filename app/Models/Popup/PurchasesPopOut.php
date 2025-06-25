@@ -3,7 +3,7 @@
 namespace App\Models\Popup;
 
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Illuminate\Support\Facades\DB;
 use App\Traits\PurchasingTrait;
 
 

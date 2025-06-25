@@ -9,10 +9,35 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\EmphasizePlant;
 use DateTime;
 
+/**
+ * Emphasize Plant Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class EmphasizePlantController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
+    /**
+     * Get Emphasize Plant Data
+     * 
+     * @param WidgetRequest $request The validated HTTP request containing parameters
+     * @return JsonResponse JSON response with emphasize plant data
+     * 
+     * @throws \Exception When data processing fails
+     * 
+     * @api {get} /emphasize-plant-proteins Get Emphasize Plant Data
+     * @apiName EmphasizePlant
+     * @apiGroup EmphasizePlant
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} fytd Fiscal year to date flag
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} bar_chart_data Plant-forward purchasing data for charts
+     */
     public function emphasizePlant(WidgetRequest $request){
         $validated = $request->validated();
         try{
@@ -41,16 +66,13 @@ class EmphasizePlantController extends Controller
             // Emphasize Bar Graph Data
             $emphasizeBarGraphData = EmphasizePlant::getEmphasizeBarGraphData($date, $costCenter, $request->campus_flag, $year, $fytd);
             
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'bar_chart_data' => [
-                        $emphasizeBarGraphData
-                    ]
-                ],
-            ], 200);
+            return $this->successResponse([
+                'bar_chart_data' => [
+                    $emphasizeBarGraphData
+                ]
+            ], 'success');
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
 }

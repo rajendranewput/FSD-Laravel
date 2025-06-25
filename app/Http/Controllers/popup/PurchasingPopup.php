@@ -9,11 +9,33 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\Popup\PurchasesPopOut;
 use App\Traits\PurchasingTrait;
 
+/**
+ * Purchasing Popup Controller
+ * 
+ * @package App\Http\Controllers\Popup
+ * @version 1.0
+ */
 class PurchasingPopup extends Controller
 {
     //
     use DateHandlerTrait, PurchasingTrait;
 
+    /**
+     * Get Purchasing Popup Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with purchasing popup data
+     * 
+     * @api {get} /cor-total-popup Get Purchasing Popup Data
+     * @apiName GetPopup
+     * @apiGroup PurchasingPopup
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} data Purchasing popup data with COR information
+     */
     public function getPopup(Request $request){
         $year = $request->year;
         $campusFlag = $request->campus_flag;
@@ -28,25 +50,38 @@ class PurchasingPopup extends Controller
             }
             $corCategories = ['ground_beef', 'chicken', 'turkey', 'pork', 'eggs', 'milk_yogurt', 'fish_seafood'];
             $corTotal = PurchasesPopOut::getTotalCor($date, $year, $campusFlag, $type, $costCenter, $corCategories);
-            $corTotal = collect($corTotal)->keyBy('account_id')->toArray();
+            $corTotal = collect($corTotal)->keyBy('account_id')->toArray;
             $cor = PurchasesPopOut::getCor($date, $year, $campusFlag, $type, $costCenter, $corCategories);
             $corList = collect($cor)->keyBy('account_id')->toArray();
             foreach($corList as $data){
                 $corList[$data['account_id']]['cor_data']['total'] = $corTotal[$data['account_id']];
             }
             Redis::set($type.'_'.$date[0], json_encode($corList));
-            return response()->json([
-                'status' => 'success',
-                'data' => $corList,
-            ], 200);
+            return $this->successResponse($corList, 'success');
         } else {
-            return response()->json([
-                'status' => 'success',
-                'data' => $record,
-            ], 200);
+            return $this->successResponse($record, 'Success');
         }
     }
 
+    /**
+     * Get Line Item Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with line item data
+     * 
+     * @api {get} /get-cor-line-item-popup Get Line Item Data
+     * @apiName GetLineItem
+     * @apiGroup PurchasingPopup
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} category Specific category for filtering (optional)
+     * @apiParam {Number} page Page number for pagination (default: 1)
+     * @apiParam {Number} per_page Items per page (default: 10)
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} data Paginated line item data
+     */
     public function getLineItem(Request $request){
         $year = $request->year;
         $campusFlag = $request->campus_flag;
@@ -66,12 +101,29 @@ class PurchasingPopup extends Controller
         } else {
             $lineItemData = PurchasesPopOut::getTotalLineItem($date, $year, $campusFlag, $type, $costCenter, $page, $perPage);
         }
-        return response()->json([
-            'status' => 'success',
-            'data' => $lineItemData,
-        ], 200);
+        return $this->successResponse($lineItemData, 'success');
     }
 
+    /**
+     * Get Account COR Item Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with account COR item data
+     * 
+     * @api {get} /get-account-cor-item Get Account COR Item Data
+     * @apiName GetAccountCORItem
+     * @apiGroup PurchasingPopup
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} category Specific category for filtering
+     * @apiParam {String} mfr_item_code Manufacturer item code
+     * @apiParam {Number} page Page number for pagination (default: 1)
+     * @apiParam {Number} per_page Items per page (default: 10)
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} data Account-specific COR item data
+     */
     public function getAccountCORItem(Request $request){
         $year = $request->year;
         $campusFlag = $request->campus_flag;
@@ -88,10 +140,7 @@ class PurchasingPopup extends Controller
         }
             $lineItemData = PurchasesPopOut::getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItem_code, $category, $page, $perPage);
       
-        return response()->json([
-            'status' => 'success',
-            'data' => $lineItemData,
-        ], 200);
+        return $this->successResponse($lineItemData, 'success');
     }
 
 }

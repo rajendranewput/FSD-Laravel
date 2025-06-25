@@ -4,7 +4,7 @@ namespace App\Models\Popup;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class LeakagePopup extends Model
 {
@@ -142,7 +142,7 @@ class LeakagePopup extends Model
         return $finalData;
     }
 
-    static function getNonComplaintData($costCenter, $date, $campusFlag, $type, $teamName, $page, $perPage){
+    static function getNonComplaintData($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage){
         $query = self::select([
             'id',
             'mfr_prod_desc',

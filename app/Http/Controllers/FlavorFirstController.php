@@ -10,12 +10,35 @@ use App\Export\FlavorFirst\MultiSheetExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 
-
+/**
+ * Flavor First Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class FlavorFirstController extends Controller
 {
     //
     use DateHandlerTrait;
 
+    /**
+     * Export Flavor First Report
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with file download URL
+     * 
+     * @throws \Exception When export generation fails
+     * 
+     * @api {post} /flavor-first/export Export Flavor First Report
+     * @apiName ExportFlavorFirst
+     * @apiGroup FlavorFirst
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {String} data File download URL
+     */
     public function export(Request $request){
         ini_set('memory_limit', '1024M');
         try{
@@ -33,12 +56,9 @@ class FlavorFirstController extends Controller
             $url = Excel::store(new MultiSheetExport($year, $campusFlag, $date, $costCenter), $filePath, 'public');
             $url = Storage::disk('public')->url($filePath);
             
-            return response()->json([
-                'status' => 'success',
-                'data' => $url,
-            ], 200);
+            return $this->successResponse($url, 'success');
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
 }

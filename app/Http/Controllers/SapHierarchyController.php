@@ -5,9 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Sap;
 
+/**
+ * SAP Hierarchy Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class SapHierarchyController extends Controller
 {
-    //
+    /**
+     * Get SAP Hierarchy Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with SAP hierarchy data
+     * 
+     * @api {get} /sap-hierarchy Get SAP Hierarchy Data
+     * @apiName SapHierarchy
+     * @apiGroup SapHierarchy
+     * @apiSuccess {Object} complex Complex level hierarchy data
+     * @apiSuccess {Object} rvp RVP level hierarchy data
+     * @apiSuccess {Object} dm District manager level hierarchy data
+     * @apiSuccess {Object} account Account level hierarchy data
+     * @apiSuccess {Object} campus Campus level hierarchy data
+     * @apiSuccess {Object} cafe Cafe level hierarchy data
+     */
     public function sapHierarchy(){
         $data = Sap::getHierarchyData();
         // Initialize arrays to avoid undefined variable notices
@@ -60,9 +81,6 @@ class SapHierarchyController extends Controller
             'campus' => array_values($campus),
             'cafe' => array_values($cafe),
         ];
-        return response()->json([
-            'message' => 'Success',
-            'data' => $sap
-        ], 200); 
+        return $this->successResponse($sap, 'success');
     }
 }

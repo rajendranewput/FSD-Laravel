@@ -8,11 +8,36 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\TrimmingTransportation;
 use DateTime;
 
+/**
+ * Trimming Transportation Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class TrimmingTransportationController extends Controller
 {
     //
     use DateHandlerTrait;
 
+    /**
+     * Get Trimming Transportation Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with trimming transportation data
+     * 
+     * @throws \Exception When data processing fails
+     * 
+     * @api {get} /trimming-transportation Get Trimming Transportation Data
+     * @apiName TrimmingTransportation
+     * @apiGroup TrimmingTransportation
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} fytd Fiscal year to date flag
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} data Trimming and transportation efficiency data
+     */
     public function trimmingTransportation(Request $request){
         
         try{
@@ -39,12 +64,9 @@ class TrimmingTransportationController extends Controller
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
             $data = TrimmingTransportation::getTrimmingData($date, $costCenter, $request->campus_flag, $year, $fytd);
-            return response()->json([
-                'status' => 'success',
-                'data' => $data,
-            ], 200);
+            return $this->successResponse($data, 'success');
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
 }

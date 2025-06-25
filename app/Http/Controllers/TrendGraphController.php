@@ -10,12 +10,32 @@ use App\Models\TrendGraph\PurchasingTrend;
 use DateTime;
 use Carbon\Carbon;
 
-
+/**
+ * Trend Graph Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class TrendGraphController extends Controller
 {
     //
     use PurchasingTrait;
 
+    /**
+     * Get Purchasing Trend Graph Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with trend graph data
+     * 
+     * @api {get} /trend-purchasing Get Purchasing Trend Graph
+     * @apiName PurchasingTrendGraph
+     * @apiGroup TrendGraph
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} current_year Current year trend data
+     * @apiSuccess {Object} previous_year Previous year trend data
+     */
     public function purcahasingTrendGraph(Request $request){
         $year = $request->year;
         if($request->type == 'campus'){
@@ -40,12 +60,16 @@ class TrendGraphController extends Controller
             'current_year' => $current_trend,
             'previous_year' => $pre_trend
         );
-        return response()->json([
-            'status' => 'success',
-            'data' => $data_array,
-        ], 200);
+        return $this->successResponse($data_array, 'success');
     }
 
+    /**
+     * Process Trend Data Over Time
+     * 
+     * @param int $year The fiscal year for data processing
+     * @param array $costCenter Array of cost center identifiers
+     * @return array Processed trend data organized by category
+     */
     function trendOverData($year, $costCenter){
         $corCategories = ['ground_beef', 'chicken', 'turkey', 'pork', 'eggs', 'milk_yogurt', 'fish_seafood', 'cooked', 'pdv_total', 'seafood', 'meat'];
         $corData = PurchasingTrend::getPurchasingTrend($year, $costCenter, $corCategories);
@@ -129,6 +153,13 @@ class TrendGraphController extends Controller
         return $finalData;
     }
     
+    /**
+     * Process Trend Data for Past Periods
+     * 
+     * @param array $data Raw trend data
+     * @param int $year Fiscal year
+     * @return array Processed trend data with complete period coverage
+     */
     function processTrendOverPastData($data, $year){
         $categories = $this->getCategory();
         $categories = array_column($categories,'subcategories','key');
@@ -168,6 +199,14 @@ class TrendGraphController extends Controller
         
     }
 
+    /**
+     * Assign Empty Data for Missing Periods
+     * 
+     * @param array $data Existing trend data
+     * @param array $fiscal_period Fiscal period data
+     * @param array $purchasing_period Purchasing period data
+     * @return array Complete trend data with all periods represented
+     */
     function assign_empty_data($data, $fiscal_period, $purchasing_period)
     {
         // Convert to collections and key by 'pd' and 'processing_month_date'

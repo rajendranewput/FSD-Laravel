@@ -34,10 +34,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LogoutController;
 
 
-Route::middleware([JwtMiddleware::class])->group(function () {
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{id}', [UserController::class, 'show']);
-    Route::get('/farm-fork-spend-data', [FarmToForkController::class, 'farmForkSpendData']);
+//Route::middleware([JwtMiddleware::class])->group(function () {
+    Route::get('/farm-fork-spend-data', [FarmToForkController::class, 'farmToForkPurchasingData']);
     Route::get('/farm-to-fork-gl-code-graph', [FarmToForkController::class, 'farmToForkGLCodeData']);
     Route::get('/cooked-leakage-data', [CookedLeakageController::class, 'cookedLeakageData']);
     Route::get('/cor-data', [CorController::class, 'CorData']);
@@ -75,13 +73,13 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('/cfs-noncompliant-popup', [CfsPopupController::class, 'cfsNonCompliantPopup']);
     Route::get('/leakage-noncompliant-popup', [LeakagePopupController::class, 'leakageNonCompliantPopup']);
     Route::get('/get-account-cor-item', [PurchasingPopup::class, 'getAccountCORItem']);
-    Route::get('/refresh-token', [AuthController::class, 'refreshToken']);
+    Route::post('/refresh-token', [AuthController::class, 'refreshToken']);
     Route::get('/get-cfs-line-item', [CfsPopupController::class, 'cfsLineItems']);
     Route::get('/get-cfs-line-item-details', [CfsPopupController::class, 'cfsLineItemsDetails']);
     Route::get('/get-leakage-line-item', [LeakagePopupController::class, 'leakageLineItems']);
     Route::get('/get-leakage-line-item-details', [LeakagePopupController::class, 'leakageLineItemsDetails']);
     Route::get('/logout', [LogoutController::class, 'index']);
 
-});
+//});
 
 

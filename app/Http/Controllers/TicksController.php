@@ -8,11 +8,33 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\Purchasing;
 use DateTime;
 
+/**
+ * Ticks Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class TicksController extends Controller
 {
-    //
     use DateHandlerTrait;
 
+    /**
+     * Get Ticks Data
+     * 
+     * @param Request $request The incoming HTTP request containing parameters
+     * @return JsonResponse JSON response with ticks data
+     * 
+     * @throws \Exception When data processing fails
+     * 
+     * @api {get} /ticks Get Ticks Data
+     * @apiName Ticks
+     * @apiGroup Ticks
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     */
     public function ticks(Request $request){
         try{
             $year = $request->year;
@@ -85,12 +107,9 @@ class TicksController extends Controller
             'plant_forward' => $plantForward,
             'wellness' => $wellness
         );
-        return response()->json([
-            'status' => 'success',
-            'data' => $ticksData,
-        ], 200);
+        return $this->successResponse($ticksData, 'success');
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
 }

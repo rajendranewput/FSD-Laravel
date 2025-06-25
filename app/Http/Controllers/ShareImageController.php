@@ -7,10 +7,27 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Share Image Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class ShareImageController extends Controller
 {
-    //
-
+    /**
+     * Share Image via Email
+     * 
+     * @param Request $request The incoming HTTP request containing the image file
+     * @return JsonResponse JSON response with file URL or error message
+     * 
+     * @api {get} /image-share Share Image
+     * @apiName ShareImage
+     * @apiGroup ShareImage
+     * @apiParam {File} file Image file to be shared
+     * @apiSuccess {String} data File download URL
+     * @apiError {String} message Error message if file upload fails
+     */
     public function shareImage(Request $request){
         // Validate the file
 
@@ -24,12 +41,11 @@ class ShareImageController extends Controller
             ];
             $mail = Mail::to('hemlata@newput.com')->send(new SendMail($details));
            
-            return response()->json([
-                'message' => 'Email sent successfully',
+            return $this->successResponse([
                 'file_path' => $url
-                ], 200);
+            ], 'Email sent successfully');
         }
         
-        return response()->json(['error' => 'File not uploaded'], 400);
+        return $this->badRequestResponse('File not uploaded');
     }
 }

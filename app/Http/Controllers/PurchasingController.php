@@ -6,12 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Requests\WidgetRequest;
 use App\Traits\DateHandlerTrait;
+use App\Traits\PurchasingTrait;
 use App\Models\Purchasing;
 use DateTime;
 
+/**
+ * Purchasing Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class PurchasingController extends Controller
 {
-    use DateHandlerTrait;
+    use DateHandlerTrait, PurchasingTrait;
     /*** To get farm to form data */
     public function farmForkSpendData(Request $request)
     {
@@ -21,7 +28,6 @@ class PurchasingController extends Controller
         $checkDate = app('check.date')($request);
         if($checkCampusRollSummary){
             $endDate = $checkDate;
-            $this->backwardDate = date('Y', strtotime(config('constants.BACKWARD_COMPATIBILITY_CHECK_DATE')));
         } else {
             if(is_array($checkDate)){
                 foreach($checkDate as $date){
@@ -41,23 +47,10 @@ class PurchasingController extends Controller
         }
         
         $backwardDate = false;
-        $selectPeriodString = 'SELECT SUM(f2f_period) as f2f_period, SUM(total_spend) as total_spend'; //Preparing select query for period
+        $selectPeriodString = 'SELECT SUM(f2f_period) as f2f_period, SUM(total_spend) as total_spend';
         $selectYearString = 'SELECT SUM(f2f_ytd) as f2f_ytd, SUM(ytd_total_spend) as ytd_total_spend'; //Preparing select query for year
-        $costCenters = Purchasing::accountDynamicCostCenters($request);
-        if($checkCampusRollSummary){
-            if($checkCampusRoll){
-                $costCenters = $request->costCenters;
-            } else if($checkAccCampusRoll){
-            } else {
-                $costCenters = $this->purchasing_model->dynamicCostCenter($request->dynamicLocation);
-            }
-            // $farm_to_fork_period_data = $this->farm_to_fork_data($costCenters, $end_date, $campus_roll_up, false, true, 'period', $select_period_string, $backward_date);
-            // $farm_to_fork_year_data = $this->farm_to_fork_data($cost_centers, $end_date, $campus_roll_up, false, true, 'year', $select_year_string, $backward_date, $fytd_periods);
-        } else{
-            
-            $farmToForkPeriodData = $this->farmToForkData($request, $request->costCenters, $endDate, $request->campusRollUp, false, true, 'period', $selectPeriodString, $backwardDate);
-            $farmToForkYearData = $this->farmToForkData($request, $request->costCenters, $endDate, $request->campusRollUp, false, true, 'year', $selectYearString, $backwardDate,$fytdPeriods);
-        }
+        $farmToForkPeriodData = $this->farmToForkData($request, $request->costCenters, $endDate, $request->campusRollUp, false, true, 'period', $selectPeriodString, $backwardDate);
+        $farmToForkYearData = $this->farmToForkData($request, $request->costCenters, $endDate, $request->campusRollUp, false, true, 'year', $selectYearString, $backwardDate,$fytdPeriods);
 
         $data = array(
             'farmToForkPeriodData' => $farmToForkPeriodData,
@@ -84,7 +77,6 @@ class PurchasingController extends Controller
         $checkallLevelFlag = app('check.allLevelFlag')($request);
         if($checkCampusRollSummary){
             $endDate = $checkDate;
-            $this->backwardDate = date('Y', strtotime(config('constants.BACKWARD_COMPATIBILITY_CHECK_DATE')));
         } else {
             if(is_array($checkDate)){
                 foreach($checkDate as $date){
@@ -99,7 +91,6 @@ class PurchasingController extends Controller
                 $endDate[] = $pDate->format('Y-m-d');
                 $back_date = 0;
             }
-            $this->backward_date = '';
         }
         
         if($checkallLevelFlag){
@@ -180,7 +171,8 @@ class PurchasingController extends Controller
                 'data' => $farmToFormGLData
             ));
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
+
 }

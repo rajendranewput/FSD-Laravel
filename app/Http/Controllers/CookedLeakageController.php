@@ -9,11 +9,35 @@ use App\Traits\PurchasingTrait;
 use App\Models\CookedLeakage;
 use Illuminate\Support\Facades\Redis;
 
+/**
+ * Cooked Leakage Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class CookedLeakageController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
-    /*** get cooked and leakage data*/
+    /**
+     * Get Cooked and Leakage Data
+     * 
+     * @param WidgetRequest $request The validated HTTP request containing parameters
+     * @return JsonResponse JSON response with cooked and leakage data
+     * 
+     * @throws \Exception When data processing fails
+     * 
+     * @api {get} /cooked-leakage Get Cooked and Leakage Data
+     * @apiName CookedLeakageData
+     * @apiGroup CookedLeakage
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} cookedFromScratch Cooked-from-scratch data with color threshold
+     * @apiSuccess {Object} leakageFromVendors Leakage data with color threshold
+     */
     public function cookedLeakageData(WidgetRequest $request){
         
         $validated = $request->validated();
@@ -42,12 +66,9 @@ class CookedLeakageController extends Controller
                 ),
             );
             
-            return response()->json([
-                'status' => 'success',
-                'data' => $data,
-            ], 200);
+            return $this->successResponse($data, 'success');
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
     

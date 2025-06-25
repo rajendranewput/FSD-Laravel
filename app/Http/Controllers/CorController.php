@@ -8,12 +8,42 @@ use App\Traits\PurchasingTrait;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Cor;
 
+/**
+ * COR Controller
+ * 
+ * @package App\Http\Controllers
+ * @version 1.0
+ */
 class CorController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
+    /**
+     * Get COR Data
+     * 
+     * @param WidgetRequest $request The validated HTTP request containing parameters
+     * @return JsonResponse JSON response with COR data
+     * 
+     * @throws \Exception When data processing fails
+     * 
+     * @api {get} /cor-data Get COR Data
+     * @apiName CorData
+     * @apiGroup COR
+     * @apiParam {Number} year Fiscal year for data retrieval
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} campus_flag Campus flag identifier
+     * @apiParam {String} type Data type (campus or other)
+     * @apiParam {String} team_name Team identifier
+     * @apiSuccess {Object} total_cor Total COR data with percentage and color threshold
+     * @apiSuccess {Object} beef Beef COR data with percentage and color threshold
+     * @apiSuccess {Object} chiken Chicken COR data with percentage and color threshold
+     * @apiSuccess {Object} turkey Turkey COR data with percentage and color threshold
+     * @apiSuccess {Object} pork Pork COR data with percentage and color threshold
+     * @apiSuccess {Object} eggs Eggs COR data with percentage and color threshold
+     * @apiSuccess {Object} dairy Dairy COR data with percentage and color threshold
+     * @apiSuccess {Object} fish Fish COR data with percentage and color threshold
+     */
     public function CorData(WidgetRequest $request){
-        //set_time_limit(120);
        
         $validated = $request->validated();
         
@@ -74,12 +104,9 @@ class CorController extends Controller
                 'dairy' => array('percentage' => $dairy, 'color_threshold' => $dairyColor),
                 'fish' => array('percentage' => $fish, 'color_threshold' => $fishColor),
             );
-            return response()->json([
-                'status' => 'success',
-                'data' => $corResponse,
-            ], 200);
+            return $this->successResponse($corResponse, 'success');
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
 }
