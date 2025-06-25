@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\widgetRequest;
+use App\Http\Requests\WidgetRequest;
 use App\Traits\DateHandlerTrait;
 use Illuminate\Support\Facades\Redis;
 use App\Models\BeefPerMeal;
@@ -14,7 +14,7 @@ class BeefPerMealController extends Controller
     //
     use DateHandlerTrait;
 
-    public function beefPerMeal(widgetRequest $request){
+    public function beefPerMeal(WidgetRequest $request){
         $validated = $request->validated();
         
         try{

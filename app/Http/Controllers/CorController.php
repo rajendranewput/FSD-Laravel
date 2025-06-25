@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\widgetRequest;
+use App\Http\Requests\WidgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Traits\PurchasingTrait;
 use Illuminate\Support\Facades\Redis;
@@ -12,7 +12,7 @@ class CorController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
-    public function CorData(widgetRequest $request){
+    public function CorData(WidgetRequest $request){
         //set_time_limit(120);
        
         $validated = $request->validated();

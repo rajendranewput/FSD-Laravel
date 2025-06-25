@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\widgetRequest;
+use App\Http\Requests\WidgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Traits\PurchasingTrait;
 use Illuminate\Support\Facades\Redis;
@@ -13,7 +13,7 @@ class DecreasingDeforestationController extends Controller
 {
     use DateHandlerTrait, PurchasingTrait;
 
-    public function decreasingDeforestation(widgetRequest $request){
+    public function decreasingDeforestation(WidgetRequest $request){
         $validated = $request->validated();
         try{
             $year = $request->year;

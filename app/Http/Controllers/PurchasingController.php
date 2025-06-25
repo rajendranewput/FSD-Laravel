@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
-use App\Http\Requests\widgetRequest;
+use App\Http\Requests\WidgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Models\Purchasing;
 use DateTime;

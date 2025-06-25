@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\widgetRequest;
+use App\Http\Requests\WidgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Models\FiscalPeriod;
 use Illuminate\Support\Facades\Redis;
@@ -42,7 +42,7 @@ class FiscalPeriodController extends Controller
         }
 
     }
-    public function checkForPopups(widgetRequest $request){
+    public function checkForPopups(WidgetRequest $request){
         $validated = $request->validated();
 
         //try{

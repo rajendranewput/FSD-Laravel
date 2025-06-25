@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\widgetRequest;
+use App\Http\Requests\WidgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Traits\PurchasingTrait;
 use App\Models\CookedLeakage;
@@ -14,7 +14,7 @@ class CookedLeakageController extends Controller
     use DateHandlerTrait, PurchasingTrait;
 
     /*** get cooked and leakage data*/
-    public function cookedLeakageData(widgetRequest $request){
+    public function cookedLeakageData(WidgetRequest $request){
         
         $validated = $request->validated();
         

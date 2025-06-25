@@ -6,9 +6,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "firebase/php-jwt": "^6.11",
         "google/apiclient": "^2.12",
+        "knuckleswtf/scribe": "^5.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "league/csv": "^9.23",
         "predis/predis": "^2.2"
     },
     "require-dev": {

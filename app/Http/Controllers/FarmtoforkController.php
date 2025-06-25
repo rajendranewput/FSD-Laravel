@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\widgetRequest;
+use App\Http\Requests\WidgetRequest;
 use App\Traits\DateHandlerTrait;
 use App\Traits\PurchasingTrait;
 use App\Models\Farmtofork;
@@ -15,7 +15,7 @@ class FarmtoforkController extends Controller
     use DateHandlerTrait, PurchasingTrait;
 
     /* To get farm to fork GL code data */
-    public function farmToForkGLCodeData(widgetRequest $request){
+    public function farmToForkGLCodeData(WidgetRequest $request){
         $validated = $request->validated();
         try{
             $year = $request->year;
@@ -90,7 +90,7 @@ class FarmtoforkController extends Controller
         }
     }
 
-    public function farmForkSpendData(widgetRequest $request){
+    public function farmForkSpendData(WidgetRequest $request){
         $validated = $request->validated();
         try{
             $year = $request->year;

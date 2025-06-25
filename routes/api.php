@@ -7,7 +7,7 @@ use App\Http\Controllers\PurchasingController;
 use App\Http\Controllers\CorController;
 use App\Http\Controllers\CookedLeakageController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\FarmtoforkController;
+use App\Http\Controllers\FarmToForkController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\FlavorFirstController;
 use App\Http\Controllers\BeefPerMealController;
@@ -24,20 +24,21 @@ use App\Http\Controllers\TrendGraphController;
 use App\Http\Controllers\TicksController;
 use App\Http\Controllers\AnimalProteinsPerMealController;
 use App\Http\Controllers\FsdHierarchyController;
-use App\Http\controllers\popup\PurchasingPopup;
+use App\Http\controllers\Popup\PurchasingPopup;
 use App\Http\Controllers\GlcodeController;
-use App\Http\Controllers\popup\FarmToForkPopup;
-use App\Http\Controllers\popup\CfsPopupController;
-use App\Http\Controllers\popup\LeakagePopupController;
+use App\Http\Controllers\Popup\FarmToForkPopup;
+use App\Http\Controllers\Popup\CfsPopupController;
+use App\Http\Controllers\Popup\LeakagePopupController;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LogoutController;
 
 
-//Route::middleware([JwtMiddleware::class])->group(function () {
+Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{id}', [UserController::class, 'show']);
-    Route::get('/farm-fork-spend-data', [FarmtoforkController::class, 'farmForkSpendData']);
-    Route::get('/farm-to-fork-gl-code-graph', [FarmtoforkController::class, 'farmToForkGLCodeData']);
+    Route::get('/farm-fork-spend-data', [FarmToForkController::class, 'farmForkSpendData']);
+    Route::get('/farm-to-fork-gl-code-graph', [FarmToForkController::class, 'farmToForkGLCodeData']);
     Route::get('/cooked-leakage-data', [CookedLeakageController::class, 'cookedLeakageData']);
     Route::get('/cor-data', [CorController::class, 'CorData']);
     Route::get('/set-costcenter', [LoginController::class, 'setCostCentersToRedis']);
@@ -79,9 +80,8 @@ use App\Http\Controllers\AuthController;
     Route::get('/get-cfs-line-item-details', [CfsPopupController::class, 'cfsLineItemsDetails']);
     Route::get('/get-leakage-line-item', [LeakagePopupController::class, 'leakageLineItems']);
     Route::get('/get-leakage-line-item-details', [LeakagePopupController::class, 'leakageLineItemsDetails']);
+    Route::get('/logout', [LogoutController::class, 'index']);
 
-    
-
-//});
+});
 
 
