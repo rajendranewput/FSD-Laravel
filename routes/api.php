@@ -31,7 +31,7 @@ use App\Http\Controllers\popup\CfsPopupController;
 use App\Http\Controllers\popup\LeakagePopupController;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\cafemanager\DayPartController;
 
 //Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('/users', [UserController::class, 'index']);
@@ -81,6 +81,17 @@ use App\Http\Controllers\AuthController;
     Route::get('/get-leakage-line-item-details', [LeakagePopupController::class, 'leakageLineItemsDetails']);
 
     
+  
+    // Group all day-part related routes under the 'cafemanager' URL prefix
+    Route::prefix('cafemanager')->group(function () {
+      Route::prefix('cafes/{cafeId}')->group(function () {
+            Route::get('/day-parts', [DayPartController::class, 'index']);
+            Route::post('/day-part', [DayPartController::class, 'store']);
+            Route::get('/day-part/edit', [DayPartController::class, 'edit']);
+            Route::delete('/day-part/delete', [DayPartController::class, 'destroy']);
+        });
+    });
+
 
 //});
 

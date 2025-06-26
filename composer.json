@@ -7,7 +7,7 @@
     "require": {
         "php": "^8.2",
         "google/apiclient": "^2.12",
-        "laravel/framework": "^11.9",
+        "laravel/framework": "^11.0.0",
         "laravel/tinker": "^2.9",
         "predis/predis": "^2.2"
     },
@@ -31,6 +31,7 @@
             "Tests\\": "tests/"
         },
         "files": [
+            "app/Helper/generalHelper.php",
             "app/constant_helper.php"
         ]
     },
