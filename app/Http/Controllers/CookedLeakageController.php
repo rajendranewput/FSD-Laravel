@@ -52,8 +52,8 @@ class CookedLeakageController extends Controller
             }
             $cookedFromScratch = CookedLeakage::cookedFromScratch($date, $costCenter, $request->campus_flag, $year);
             $leakageFromVendors = CookedLeakage::leakageFromVendors($date, $costCenter, $request->campus_flag, $year);
-            $cookedColor = $this->getColorThreshold($cookedFromScratch, COOKED_LEAKAGE_SECTION);
-            $leakageColor = $this->getColorThreshold($leakageFromVendors, COOKED_LEAKAGE_SECTION);
+            $cookedColor = $this->getColorThreshold($cookedFromScratch, 'cookedLeakage');
+            $leakageColor = $this->getColorThreshold($leakageFromVendors, 'cookedLeakage');
             
             $data = array(
                 'cookedFromScratch' => array(

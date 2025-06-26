@@ -8,9 +8,10 @@ use App\Traits\DateHandlerTrait;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Popup\LeakagePopup;
 
+
 /**
  * Leakage Popup Controller
- * 
+ *
  * @package App\Http\Controllers\Popup
  * @version 1.0
  */
@@ -30,8 +31,8 @@ class LeakagePopupController extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
+     * @apiParam {String} end_date End date for data range
      * @apiSuccess {Object} data Leakage popup data with account information
      */
     public function index(Request $request)
@@ -55,7 +56,7 @@ class LeakagePopupController extends Controller
 
     /**
      * Get Leakage Non-Compliant Popup Data
-     * 
+*
      * @param Request $request The incoming HTTP request containing parameters
      * @return JsonResponse JSON response with non-compliant leakage data
      * 
@@ -65,11 +66,11 @@ class LeakagePopupController extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Non-compliant leakage data with pagination
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {Number} page Page number for pagination
+     * @apiParam {Number} per_page Items per page for pagination
+     * @apiSuccess {Object} data Non-compliant leakage accounts data
      */
     public function leakageNonCompliantPopup(Request $request)
     {
@@ -91,7 +92,7 @@ class LeakagePopupController extends Controller
 
     /**
      * Get Leakage Line Items Data
-     * 
+     
      * @param Request $request The incoming HTTP request containing parameters
      * @return JsonResponse JSON response with leakage line items data
      * 
@@ -101,12 +102,12 @@ class LeakagePopupController extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} popup_type Type of popup for filtering
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Paginated leakage line items data
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} popup_type Type of popup for filtering
+     * @apiParam {Number} page Page number for pagination
+     * @apiParam {Number} per_page Items per page for pagination
+     * @apiSuccess {Object} data Leakage line items with pagination
      */
     public function leakageLineItems(Request $request){
         $year = $request->year;
@@ -129,7 +130,7 @@ class LeakagePopupController extends Controller
 
     /**
      * Get Leakage Line Items Details Data
-     * 
+     *
      * @param Request $request The incoming HTTP request containing parameters
      * @return JsonResponse JSON response with leakage line items details data
      * 
@@ -139,13 +140,13 @@ class LeakagePopupController extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} popup_type Type of popup for filtering
-     * @apiParam {String} mfr_item_code Manufacturer item code
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Detailed leakage line items data
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} popup_type Type of popup for filtering
+     * @apiParam {String} invoice_din Invoice DIN for filtering
+     * @apiParam {String} prod_description Product description for filtering
+     * @apiParam {String} min Minimum value for filtering
+     * @apiSuccess {Object} data Detailed leakage line items information
      */
     public function leakageLineItemsDetails(Request $request){
         $year = $request->year;

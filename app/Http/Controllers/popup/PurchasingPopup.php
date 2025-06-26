@@ -22,7 +22,7 @@ class PurchasingPopup extends Controller
 
     /**
      * Get Purchasing Popup Data
-     * 
+     *
      * @param Request $request The incoming HTTP request containing parameters
      * @return JsonResponse JSON response with purchasing popup data
      * 
@@ -32,8 +32,8 @@ class PurchasingPopup extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
+     * @apiParam {String} end_date End date for data range
      * @apiSuccess {Object} data Purchasing popup data with COR information
      */
     public function getPopup(Request $request){
@@ -50,7 +50,7 @@ class PurchasingPopup extends Controller
             }
             $corCategories = ['ground_beef', 'chicken', 'turkey', 'pork', 'eggs', 'milk_yogurt', 'fish_seafood'];
             $corTotal = PurchasesPopOut::getTotalCor($date, $year, $campusFlag, $type, $costCenter, $corCategories);
-            $corTotal = collect($corTotal)->keyBy('account_id')->toArray;
+            $corTotal = collect($corTotal)->keyBy('account_id')->toArray();
             $cor = PurchasesPopOut::getCor($date, $year, $campusFlag, $type, $costCenter, $corCategories);
             $corList = collect($cor)->keyBy('account_id')->toArray();
             foreach($corList as $data){
@@ -59,13 +59,13 @@ class PurchasingPopup extends Controller
             Redis::set($type.'_'.$date[0], json_encode($corList));
             return $this->successResponse($corList, 'success');
         } else {
-            return $this->successResponse($record, 'Success');
+            return $this->successResponse($record, 'Purchasing popup data retrieved from cache');
         }
     }
 
     /**
      * Get Line Item Data
-     * 
+     *
      * @param Request $request The incoming HTTP request containing parameters
      * @return JsonResponse JSON response with line item data
      * 
@@ -75,12 +75,12 @@ class PurchasingPopup extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} category Specific category for filtering (optional)
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Paginated line item data
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} category Category for filtering line items
+     * @apiParam {Number} page Page number for pagination
+     * @apiParam {Number} per_page Items per page for pagination
+     * @apiSuccess {Object} data Line item data with pagination
      */
     public function getLineItem(Request $request){
         $year = $request->year;
@@ -116,12 +116,12 @@ class PurchasingPopup extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} category Specific category for filtering
-     * @apiParam {String} mfr_item_code Manufacturer item code
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} category Category for filtering
+     * @apiParam {String} mfr_item_code Manufacturer item code for specific item
+     * @apiParam {Number} page Page number for pagination
+     * @apiParam {Number} per_page Items per page for pagination
      * @apiSuccess {Object} data Account-specific COR item data
      */
     public function getAccountCORItem(Request $request){
@@ -129,7 +129,7 @@ class PurchasingPopup extends Controller
         $campusFlag = $request->campus_flag;
         $type = $request->type;
         $category = $request->category;
-        $mfrItem_code = $request->mfr_item_code;
+        $mfrItemCode = $request->mfr_item_code;
         $page = $request->input('page', 1);
         $perPage = $request->input('per_page', 10);
         $date = $this->handleDates($request->end_date, $request->campus_flag);
@@ -138,7 +138,7 @@ class PurchasingPopup extends Controller
         } else {
             $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
         }
-            $lineItemData = PurchasesPopOut::getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItem_code, $category, $page, $perPage);
+            $lineItemData = PurchasesPopOut::getAccountItem($date, $year, $campusFlag, $type, $costCenter, $mfrItemCode, $category, $page, $perPage);
       
         return $this->successResponse($lineItemData, 'success');
     }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\Popup\CfsPopup;
 
 /**
- * CFS (Cooked From Scratch) Popup Controller
+ * CFS Popup Controller
  * 
  * @package App\Http\Controllers\Popup
  * @version 1.0
@@ -21,7 +21,7 @@ class CfsPopupController extends Controller
 
     /**
      * Get CFS Popup Data
-     * 
+     *
      * @param Request $request The incoming HTTP request containing parameters
      * @return JsonResponse JSON response with CFS popup data
      * 
@@ -31,8 +31,8 @@ class CfsPopupController extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
+     * @apiParam {String} end_date End date for data range
      * @apiSuccess {Object} data CFS popup data with account information
      */
     public function index(Request $request)
@@ -50,7 +50,7 @@ class CfsPopupController extends Controller
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
             $Cfs = CfsPopup::getAccountCfs($costCenter, $date, $campusFlag, $type, $teamName);
-            return $this->successResponse($Cfs, 'success');
+            return $this->successResponse($Cfs, 'CFS popup data retrieved successfully');
       //  }
     }
 
@@ -66,11 +66,11 @@ class CfsPopupController extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Non-compliant CFS data with pagination
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {Number} page Page number for pagination
+     * @apiParam {Number} per_page Items per page for pagination
+     * @apiSuccess {Object} data Non-compliant CFS accounts data
      */
     public function cfsNonCompliantPopup(Request $request)
     {
@@ -88,7 +88,7 @@ class CfsPopupController extends Controller
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
             $Cfs = CfsPopup::getNonComplaintCfs($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage);
-            return $this->successResponse($Cfs, 'success');
+            return $this->successResponse($Cfs, 'CFS non-compliant popup data retrieved successfully');
       //  }
     }
 
@@ -104,12 +104,12 @@ class CfsPopupController extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} popup_type Type of popup for filtering
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Paginated CFS line items data
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} popup_type Type of popup for filtering
+     * @apiParam {Number} page Page number for pagination
+     * @apiParam {Number} per_page Items per page for pagination
+     * @apiSuccess {Object} data CFS line items with pagination
      */
     public function cfsLineItems(Request $request){
         $year = $request->year;
@@ -126,9 +126,10 @@ class CfsPopupController extends Controller
             $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
         }
         $Cfs = CfsPopup::getCfsLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage);
-        return $this->successResponse($Cfs, 'success');
+        return $this->successResponse($Cfs, 'CFS line items data retrieved successfully');
 
     }
+
     /**
      * Get CFS Line Items Details Data
      * 
@@ -141,13 +142,13 @@ class CfsPopupController extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} popup_type Type of popup for filtering
-     * @apiParam {String} mfr_item_code Manufacturer item code
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Detailed CFS line items data
+     * @apiParam {String} end_date End date for data range
+     * @apiParam {String} popup_type Type of popup for filtering
+     * @apiParam {String} mfr_item_code Manufacturer item code for specific item
+     * @apiParam {Number} page Page number for pagination
+     * @apiParam {Number} per_page Items per page for pagination
+     * @apiSuccess {Object} data Detailed CFS line items information
      */
     public function cfsLineItemsDetails(Request $request){
         $year = $request->year;
@@ -165,7 +166,7 @@ class CfsPopupController extends Controller
             $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
         }
         $Cfs = CfsPopup::getAccountCfsLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $mfrItemCode, $page, $perPage);
-        return $this->successResponse($Cfs, 'success');
+        return $this->successResponse($Cfs, 'CFS line items details retrieved successfully');
 
     }
 }

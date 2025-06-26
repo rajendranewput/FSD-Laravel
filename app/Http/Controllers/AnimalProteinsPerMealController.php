@@ -51,11 +51,11 @@ class AnimalProteinsPerMealController extends Controller
             if(is_array($dates)){
                 foreach($dates as $day){
                     $d = new DateTime($day);
-                    $end_date[] = $d->format('n/d/Y');
+                    $endDate[] = $d->format('n/d/Y');
                 }
             } else {
                 $d = new DateTime($dates);
-                $end_date[] = $d->format('n/d/Y');
+                $endDate[] = $d->format('n/d/Y');
             }
             $date = $this->handleDates($request->end_date, $request->campus_flag);
             if($request->type == 'campus'){
@@ -63,7 +63,7 @@ class AnimalProteinsPerMealController extends Controller
             } else {
                 $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
             }
-            $data = AnimalProteinsPerMeal::getAnimalProteinsPerMealData($date, $costCenter, $request->campus_flag, $year, $fytd, $end_date);
+            $data = AnimalProteinsPerMeal::getAnimalProteinsPerMealData($date, $costCenter, $request->campus_flag, $year, $fytd, $endDate);
             
             return $this->successResponse($data, 'Success');
         } catch(\Exception $e) {

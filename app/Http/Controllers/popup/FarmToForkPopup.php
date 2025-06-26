@@ -24,6 +24,11 @@ class FarmToForkPopup extends Controller
 
     protected $service;
 
+    /**
+     * Constructor
+     * 
+     * @param FarmToForkService $service Farm to fork service instance
+     */
     public function __construct(FarmToForkService $service)
     {
         $this->service = $service;
@@ -41,9 +46,9 @@ class FarmToForkPopup extends Controller
      * @apiParam {Number} year Fiscal year for data retrieval
      * @apiParam {String} campus_flag Campus flag identifier
      * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} end_date End date for data range
      * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Farm to fork popup data with supply chain information
+     * @apiParam {String} end_date End date for data range
+     * @apiSuccess {Object} data Farm to fork popup data with account information
      */
     public function index(Request $request)
     {
@@ -104,30 +109,48 @@ class FarmToForkPopup extends Controller
                 }
             }
           
-            $final_data = [];
+            $finalData = [];
             $first = collect($firstItemYtdArray)->keyBy('account_id');
-            foreach($first as $fkey => $first_val) {
-                if($fkey == $first_val->account_id){
-                    $final_data[] = array(
-                        'account_id' => $first_val->account_id,
-                        'account_name' => $first_val->name,
+            foreach($first as $fkey => $firstVal) {
+                if($fkey == $firstVal->account_id){
+                    $finalData[] = array(
+                        'account_id' => $firstVal->account_id,
+                        'account_name' => $firstVal->name,
                         'period' => $f2f[$fkey],
                         'fytd' => $f2fYtd[$fkey],
                     );
                 }
             }
-            Redis::set($type.'_f2f_'.$date[0], json_encode($final_data));
-            return $this->successResponse($final_data, 'success');
+            Redis::set($type.'_f2f_'.$date[0], json_encode($finalData));
+            return $this->successResponse($finalData, 'success');
         } else {
-            return $this->successResponse($record, 'success');
+            return $this->successResponse($record, 'Farm to fork popup data retrieved from cache');
         }
     }
+
+    /**
+     * Clear Redis Cache
+     * 
+     * @param Request $request The incoming HTTP request
+     * @return string Success message
+     * 
+     * @api {get} /radis-clear Clear Redis Cache
+     * @apiName RadisClear
+     * @apiGroup FarmToForkPopup
+     * @apiSuccess {String} message Cache cleared successfully
+     */
     public function radisClear(Request $request)
     {
         Redis::flushdb();
         echo 'cache cleared successfully';
     }
 
+    /**
+     * Get FYTD Periods
+    
+     * @param string|array $endDate End date(s) for period calculation
+     * @return array Array of fiscal period end dates
+     */
     public static function getFytdPeriods(string|array $endDate): array
     {
         if(is_array($endDate)){
@@ -157,118 +180,5 @@ class FarmToForkPopup extends Controller
             ->toArray();
 
         return $endDates;
-    }
-
-    /**
-     * Get Farm to Fork Non-Compliant Popup Data
-     * 
-     * @param Request $request The incoming HTTP request containing parameters
-     * @return JsonResponse JSON response with non-compliant farm to fork data
-     * 
-     * @api {get} /popup/farm-to-fork/non-compliant Get Farm to Fork Non-Compliant Popup Data
-     * @apiName FarmToForkNonCompliantPopup
-     * @apiGroup FarmToForkPopup
-     * @apiParam {Number} year Fiscal year for data retrieval
-     * @apiParam {String} campus_flag Campus flag identifier
-     * @apiParam {String} type Data type (campus or other)
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
-     * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Non-compliant farm to fork data with pagination
-     */
-    public function farmToForkNonCompliantPopup(Request $request)
-    {
-        $year = $request->year;
-        $campusFlag = $request->campus_flag;
-        $type = $request->type;
-        $page = $request->input('page', 1);
-        $perPage = $request->input('per_page', 10);
-        $date = $this->handleDates($request->end_date, $request->campus_flag);
-        $teamName = $request->team_name;
-        
-        if($request->type == 'campus'){
-            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
-        } else {
-            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
-        }
-        $farmToFork = FarmToForkModel::getNonComplaintFarmToFork($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage);
-        return $this->successResponse($farmToFork, 'success');
-    }
-
-    /**
-     * Get Farm to Fork Line Items Data
-     * 
-     * @param Request $request The incoming HTTP request containing parameters
-     * @return JsonResponse JSON response with farm to fork line items data
-     * 
-     * @api {get} /popup/farm-to-fork/line-items Get Farm to Fork Line Items Data
-     * @apiName FarmToForkLineItems
-     * @apiGroup FarmToForkPopup
-     * @apiParam {Number} year Fiscal year for data retrieval
-     * @apiParam {String} campus_flag Campus flag identifier
-     * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} popup_type Type of popup for filtering
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
-     * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Paginated farm to fork line items data
-     */
-    public function farmToForkLineItems(Request $request){
-        $year = $request->year;
-        $campusFlag = $request->campus_flag;
-        $type = $request->type;
-        $popupType = $request->popup_type;
-        $date = $this->handleDates($request->end_date, $request->campus_flag);
-        $teamName = $request->team_name;
-        $page = $request->input('page', 1);
-        $perPage = $request->input('per_page', 10);
-        if($request->type == 'campus'){
-            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
-        } else {
-            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
-        }
-        $farmToFork = FarmToForkModel::getFarmToForkLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $page, $perPage);
-        return $this->successResponse($farmToFork, 'success');
-    }
-
-    /**
-     * Get Farm to Fork Line Items Details Data
-     * 
-     * @param Request $request The incoming HTTP request containing parameters
-     * @return JsonResponse JSON response with farm to fork line items details data
-     * 
-     * @api {get} /popup/farm-to-fork/line-items-details Get Farm to Fork Line Items Details Data
-     * @apiName FarmToForkLineItemsDetails
-     * @apiGroup FarmToForkPopup
-     * @apiParam {Number} year Fiscal year for data retrieval
-     * @apiParam {String} campus_flag Campus flag identifier
-     * @apiParam {String} type Data type (campus or other)
-     * @apiParam {String} popup_type Type of popup for filtering
-     * @apiParam {String} mfr_item_code Manufacturer item code
-     * @apiParam {Number} page Page number for pagination (default: 1)
-     * @apiParam {Number} per_page Items per page (default: 10)
-     * @apiParam {String} end_date End date for data range
-     * @apiParam {String} team_name Team identifier
-     * @apiSuccess {Object} data Detailed farm to fork line items data
-     */
-    public function farmToForkLineItemsDetails(Request $request){
-        $year = $request->year;
-        $campusFlag = $request->campus_flag;
-        $type = $request->type;
-        $popupType = $request->popup_type;
-        $date = $this->handleDates($request->end_date, $request->campus_flag);
-        $teamName = $request->team_name;
-        $page = $request->input('page', 1);
-        $perPage = $request->input('per_page', 10);
-        $mfrItemCode = $request->mfr_item_code;
-        if($request->type == 'campus'){
-            $costCenter = json_decode(Redis::get('cost_campus'.$request->team_name), true);
-        } else {
-            $costCenter = json_decode(Redis::get('cost_'.$request->team_name), true);
-        }
-        $farmToFork = FarmToForkModel::getAccountFarmToForkLineItems($costCenter, $date, $year, $campusFlag, $type, $teamName, $mfrItemCode, $page, $perPage);
-        return $this->successResponse($farmToFork, 'success');
     }
 }

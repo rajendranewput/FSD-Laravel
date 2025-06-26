@@ -193,7 +193,7 @@ class Purchasing extends Model
     }
 
     // To fetch Farm to Fork GL Code graph data
-    public static function farmToForkGLCodeData($request, $costCenters, $date, $campus_flag){
+    public static function farmToForkGLCodeData($request, $costCenters, $date, $campusFlag){
         $year = $request->year;
         $checkAllLevel = app('check.allLevelFlag')($request);
         $checkCampusRollSummary = app('check.campusRollSummary')($request);
@@ -225,11 +225,11 @@ class Purchasing extends Model
             $glCodeQuery->whereIn('exp_1', '?');
             $glCodeQuery->whereIn('processing_year', '?');
         }
-        if($campus_flag == 3){
+        if($campusFlag == 3){
             $glCodeQuery->whereIn('exp_1', '?');
             $glCodeQuery->whereIn('processing_year', '?');
         }
-        if($campus_flag == 0){
+        if($campusFlag == 0){
             $glCodeQuery->whereIn('exp_1', '?');
             $glCodeQuery->whereIn('end_date', $date);
         }
@@ -279,7 +279,7 @@ class Purchasing extends Model
         return $dataArray;
     }
     
-    static function getTicks($date, $costCenter, $campus_flag, $year){
+    static function getTicks($date, $costCenter, $campusFlag, $year){
         $tableName = 'trend_purchasing_' . intval($year);
         
         // Execute the query

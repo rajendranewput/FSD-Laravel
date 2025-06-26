@@ -21,34 +21,34 @@ trait DateHandlerTrait
             RVP_SUMMARY_FLAG, 
             COMPANY_SUMMARY_FLAG
         ])) {
-            $end_date = $date;
+            $endDate = $date;
         } else {
             if($actualDate){
-                $end_date = [];
+                $endDate = [];
                 if (is_array($date)) {
                     foreach ($date as $d_val) {
                         $date = new DateTime($d_val);
-                        $end_date[] = $date->format('Y-m-d');
+                        $endDate[] = $date->format('Y-m-d');
                     }
                 } else {
                     $date = new DateTime($date);
-                    $end_date[] = $date->format('Y-m-d');
+                    $endDate[] = $date->format('Y-m-d');
                 }
             } else {
-                $end_date = [];
+                $endDate = [];
                 if (is_array($date)) {
                     foreach ($date as $d_val) {
                         $date = new DateTime($d_val);
-                        $end_date[] = $date->format('Y-m-01');
+                        $endDate[] = $date->format('Y-m-01');
                     }
                 } else {
                     $date = new DateTime($date);
-                    $end_date[] = $date->format('Y-m-01');
+                    $endDate[] = $date->format('Y-m-01');
                 }
             }
             
         }
 
-        return $end_date;
+        return $endDate;
     }
 }

@@ -10,7 +10,7 @@ class BeefPerMeal extends Model
 {
     use HasFactory;
 
-    static function getBeefData($date, $costCenter, $campusFlag, $year, $fytd, $end_date){
+    static function getBeefData($date, $costCenter, $campusFlag, $year, $fytd, $endDate){
         //Item 1
         try{
             $itemFirstQuery = DB::table('purchases_meta_'.$year)
@@ -50,7 +50,7 @@ class BeefPerMeal extends Model
                 $breakFast = DB::table('dashboard_aggregates_v2 as d')
                 ->select(DB::raw('SUM(d.breakfast_percentage) as breakfast_percentage'))
                 ->whereIn('d.cost_center', $costCenter)
-                ->whereIn('processing_period', $end_date)
+                ->whereIn('processing_period', $endDate)
                 ->first();
                 $breakFastPer = $breakFast->breakfast_percentage;
                

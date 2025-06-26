@@ -82,7 +82,7 @@ class FsdHierarchyController extends Controller
             'campus' => array_values($campus),
             'cafe' => array_values($cafe),
         ];
-        return $this->successResponse($fsd, 'FSD hierarchy data retrieved successfully');
+        return $this->successResponse($fsd, 'success');
     }
     public function sectorHierarchyData(Request $request){
         $result = FSD::getDropDown($request->type, $request->team_name, $request->rvp, $request->dm, $request->account, $request->campus);

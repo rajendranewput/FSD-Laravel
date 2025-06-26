@@ -142,7 +142,7 @@ class FiscalPeriod extends Model
 
             // Extract unique unit numbers and periods
             $cost = array_unique(array_column($missingRecords, 'unit_number'));
-            $end_date = array_unique(array_column($missingRecords, 'processing_month'));
+            $endDate = array_unique(array_column($missingRecords, 'processing_month'));
 
             // Get Café details
             $cafeDetails = DB::table('cafes as c')
@@ -162,7 +162,7 @@ class FiscalPeriod extends Model
                     'fiscal_period',
                     'fiscal_year'
                 )
-                ->whereIn(DB::raw('DATE_FORMAT(STR_TO_DATE(end_date, "%m/%d/%Y"), "%Y-%m-01")'), $end_date)
+                ->whereIn(DB::raw('DATE_FORMAT(STR_TO_DATE(end_date, "%m/%d/%Y"), "%Y-%m-01")'), $endDate)
                 ->get()
                 ->keyBy('end_date'); // Store as key-value for easier mapping
 

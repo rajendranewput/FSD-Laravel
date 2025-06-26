@@ -10,7 +10,7 @@ class AnimalProteinsPerMeal extends Model
 {
     use HasFactory;
 
-    static function getAnimalProteinsPerMealData($date, $costCenter, $campusFlag, $year, $fytd, $end_date){
+    static function getAnimalProteinsPerMealData($date, $costCenter, $campusFlag, $year, $fytd, $endDate){
         //Item 1
         try{
             $itemFirstQuery = DB::table('purchases_meta_'.$year)

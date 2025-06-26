@@ -50,11 +50,11 @@ class TrimmingTransportationController extends Controller
             if(is_array($dates)){
                 foreach($dates as $day){
                     $d = new DateTime($day);
-                    $end_date[] = $d->format('n/d/Y');
+                    $endDate[] = $d->format('n/d/Y');
                 }
             } else {
                 $d = new DateTime($dates);
-                $end_date[] = $d->format('n/d/Y');
+                $endDate[] = $d->format('n/d/Y');
             }
             $date = $this->handleDates($request->end_date, $request->campus_flag);
            

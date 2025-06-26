@@ -46,11 +46,11 @@ class FlavorFirstController extends Controller
             $campusFlag = $request->campus_flag;
             $date = $this->handleDates($request->end_date, $request->campus_flag);
             $type = $request->type;
-            $team_name = $request->team_name;
+            $teamName = $request->team_name;
             if($type == 'campus'){
-                $costCenter = json_decode(Redis::get('cost_campus'.$team_name), true);
+                $costCenter = json_decode(Redis::get('cost_campus'.$teamName), true);
             } else {
-                $costCenter = json_decode(Redis::get('cost_'.$team_name), true);
+                $costCenter = json_decode(Redis::get('cost_'.$teamName), true);
             }
             $filePath = 'flavor_first_report.xlsx';
             $url = Excel::store(new MultiSheetExport($year, $campusFlag, $date, $costCenter), $filePath, 'public');

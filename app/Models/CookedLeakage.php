@@ -11,7 +11,7 @@ class CookedLeakage extends Model
     use HasFactory;
 
     // To fetch cooked from scratch data
-    static function cookedFromScratch($date, $costCenter, $campus_flag, $year){
+    static function cookedFromScratch($date, $costCenter, $campusFlag, $year){
        
         $cookedFromScratch = DB::table('purchases_meta_'.$year)     
             ->select(DB::raw('SUM(IF(cfs = 2, spend, 0)) as spend'))
@@ -28,7 +28,7 @@ class CookedLeakage extends Model
     }
 
     // To fetch leakage from vendors data
-    static function leakageFromVendors($date, $costCenter, $campus_flag, $year){
+    static function leakageFromVendors($date, $costCenter, $campusFlag, $year){
 
         $leakageFromVendors = DB::table('leakages')
         ->select(DB::raw('SUM(leakage_total_spend) as leakage_total_spend'))

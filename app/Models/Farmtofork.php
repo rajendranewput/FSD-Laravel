@@ -10,7 +10,7 @@ class Farmtofork extends Model
 {
     use HasFactory;
 
-    static function getGlCodeData($date, $costCenter, $campus_flag, $year){
+    static function getGlCodeData($date, $costCenter, $campusFlag, $year){
         $glCode = [PRODUCE_GL_CODE, MEAT_GL_CODE, CHEESE_GL_CODE, FLUID_DAIRY_GL_CODE, SEAFOOD_GL_CODE, SUSHI_GL_CODE, BAKERY_GL_CODE, ARTISAN_GL_CODE, COFFEE_GL_CODE, LOCALLY_CRAFTED_GL_CODE];
           
         $data = DB::table('gl_codes')
@@ -23,7 +23,7 @@ class Farmtofork extends Model
         return $data;
     }
 
-    static function farmToForkData($date, $costCenter, $campus_flag, $year, $type){
+    static function farmToForkData($date, $costCenter, $campusFlag, $year, $type){
         // Get item 1 calculation
         $query = DB::table('gl_codes')
         ->select(DB::raw('SUM(amount) as amount'))

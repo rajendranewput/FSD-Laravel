@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class FarmToForkModel extends Model
 {
     //
-    static function getFarmToForkPop($cost_centers, $exp, $end_date, $campus_flag, $type, $team)
+    static function getFarmToForkPop($costCenters, $exp, $endDate, $campusFlag, $type, $team)
     {
         if ($type == 'rvp') {
             $query = DB::table('gl_codes as gc')
@@ -24,13 +24,13 @@ class FarmToForkModel extends Model
                 ->join('wn_costcenter as c', 'c.team_name', '=', 'gc.unit_id')
                 ->join('wn_district as a', 'a.team_name', '=', 'c.district_name')
                 ->whereIn('gc.exp_1', $exp)
-                ->whereIn('gc.unit_id', $cost_centers)
+                ->whereIn('gc.unit_id', $costCenters)
                 ->where('c.sector_name', 'A00000');
     
-            if (in_array($campus_flag, [7, 11])) {
-                $query->where('gc.processing_year', $end_date);
+            if (in_array($campusFlag, [7, 11])) {
+                $query->where('gc.processing_year', $endDate);
             } else {
-                $query->whereIn('gc.processing_date', $end_date);
+                $query->whereIn('gc.processing_date', $endDate);
             }
             if ($team !== 'A00000' && !empty($team)) {
                 $query->where('c.region_name', $team);
@@ -57,13 +57,13 @@ class FarmToForkModel extends Model
                 ->join('wn_costcenter as c', 'c.team_name', '=', 'gc.unit_id')
                 ->join('wn_region as a', 'a.team_name', '=', 'c.region_name')
                 ->whereIn('gc.exp_1', $exp)
-                ->whereIn('gc.unit_id', $cost_centers)
+                ->whereIn('gc.unit_id', $costCenters)
                 ->where('c.sector_name', 'A00000');
     
-            if ($campus_flag == 11) {
-                $query->where('gc.processing_year', $end_date);
+            if ($campusFlag == 11) {
+                $query->where('gc.processing_year', $endDate);
             } else {
-                $query->whereIn('gc.processing_date', $end_date);
+                $query->whereIn('gc.processing_date', $endDate);
             }
     
             return $query
@@ -76,7 +76,7 @@ class FarmToForkModel extends Model
         } else {
             
             if (!empty($team)) {
-                $cost_centers = DB::table('wn_costcenter as w')
+                $costCenters = DB::table('wn_costcenter as w')
                     ->join('cafes as c', 'c.cost_center', '=', 'w.team_name')
                     ->when($team !== 'A00000', function ($query) use ($team) {
                         if (strlen($team) > 5) {
@@ -103,12 +103,12 @@ class FarmToForkModel extends Model
                 ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center, account_id) as c'), 'c.cost_center', '=', 'gc.unit_id')
                 ->join('accounts as a', 'a.account_id', '=', 'c.account_id')
                 ->whereIn('gc.exp_1', $exp)
-                ->whereIn('gc.unit_id', $cost_centers);
+                ->whereIn('gc.unit_id', $costCenters);
     
-            if (in_array($campus_flag, [7, 11])) {
-                $query->where('gc.processing_year', $end_date);
+            if (in_array($campusFlag, [7, 11])) {
+                $query->where('gc.processing_year', $endDate);
             } else {
-                $query->whereIn('gc.processing_date', $end_date);
+                $query->whereIn('gc.processing_date', $endDate);
             }
     
             return $query
@@ -118,7 +118,7 @@ class FarmToForkModel extends Model
                 ->get();
         }
     }
-    static function getFarmToForkPopYTD($cost_centers, $exp, $end_date, $campus_flag, $ytd, $type, $team){
+    static function getFarmToForkPopYTD($costCenters, $exp, $endDate, $campusFlag, $ytd, $type, $team){
         if ($type == 'rvp') {
             DB::enableQueryLog();
             $query = DB::table('gl_codes as gc')
@@ -132,17 +132,17 @@ class FarmToForkModel extends Model
                     DB::raw('SUM(gc.amount) as amount')
                 )
                 ->when(
-                    in_array($campus_flag, [7, 9, 11]),
+                    in_array($campusFlag, [7, 9, 11]),
                     fn($q) => $q->selectRaw("CONCAT(gc.processing_year, '-', a.team_name) AS processing_month_date"),
                     fn($q) => $q->selectRaw("CONCAT(gc.end_date,       '-', a.team_name) AS processing_month_date")
                 )
                 ->join('wn_costcenter as c', 'c.team_name', '=', 'gc.unit_id')
                 ->join('wn_district as a', 'a.team_name', '=', 'c.district_name')
                 ->whereIn('gc.exp_1', $exp)
-                ->whereIn('gc.unit_id', $cost_centers)
+                ->whereIn('gc.unit_id', $costCenters)
                 ->where('c.sector_name', 'A00000');
     
-            if (in_array($campus_flag, [7, 11])) {
+            if (in_array($campusFlag, [7, 11])) {
                 $query->whereIn('gc.processing_year', $ytd);
             } else {
                 $query->whereIn('gc.end_date', $ytd);
@@ -170,17 +170,17 @@ class FarmToForkModel extends Model
                     DB::raw('SUM(gc.amount) as amount')
                 )
                 ->when(
-                    in_array($campus_flag, [7, 9, 11]),
+                    in_array($campusFlag, [7, 9, 11]),
                     fn($q) => $q->selectRaw("CONCAT(gc.processing_year, '-', a.team_name) AS processing_month_date"),
                     fn($q) => $q->selectRaw("CONCAT(gc.end_date,       '-', a.team_name) AS processing_month_date")
                 )
                 ->join('wn_costcenter as c', 'c.team_name', '=', 'gc.unit_id')
                 ->join('wn_region as a', 'a.team_name', '=', 'c.region_name')
                 ->whereIn('gc.exp_1', $exp)
-                ->whereIn('gc.unit_id', $cost_centers)
+                ->whereIn('gc.unit_id', $costCenters)
                 ->where('c.sector_name', 'A00000');
     
-            if ($campus_flag == 11) {
+            if ($campusFlag == 11) {
                 $query->whereIn('gc.processing_year', $ytd);
             } else {
                 $query->whereIn('gc.end_date', $ytd);
@@ -196,7 +196,7 @@ class FarmToForkModel extends Model
         } else {
            
             if (!empty($team)) {
-                $cost_centers = DB::table('wn_costcenter as w')
+                $costCenters = DB::table('wn_costcenter as w')
                     ->join('cafes as c', 'c.cost_center', '=', 'w.team_name')
                     ->when($team !== 'A00000', function ($query) use ($team) {
                         if (strlen($team) > 5) {
@@ -221,16 +221,16 @@ class FarmToForkModel extends Model
                     DB::raw('SUM(gc.amount) as amount')
                 )
                 // ->when(
-                //     in_array($campus_flag, [7, 9, 11]),
+                //     in_array($campusFlag, [7, 9, 11]),
                 //     fn($q) => $q->selectRaw("CONCAT(gc.processing_year, '-', a.team_name) AS processing_month_date"),
                 //     fn($q) => $q->selectRaw("CONCAT(gc.end_date,       '-', a.team_name) AS processing_month_date")
                 // )
                 ->join(DB::raw('(SELECT cost_center, account_id FROM cafes GROUP BY cost_center, account_id) as c'), 'c.cost_center', '=', 'gc.unit_id')
                 ->join('accounts as a', 'a.account_id', '=', 'c.account_id')
                 ->whereIn('gc.exp_1', $exp)
-                ->whereIn('gc.unit_id', $cost_centers);
+                ->whereIn('gc.unit_id', $costCenters);
     
-            if (in_array($campus_flag, [7, 11])) {
+            if (in_array($campusFlag, [7, 11])) {
                 $query->whereIn('gc.processing_year', $ytd);
             } else {
                 $query->whereIn('gc.processing_date', $ytd);
